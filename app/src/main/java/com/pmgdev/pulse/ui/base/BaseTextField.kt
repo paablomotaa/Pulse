@@ -9,7 +9,13 @@ import com.pmgdev.pulse.ui.theme.dark
 import com.pmgdev.pulse.ui.theme.darkgray
 
 @Composable
-fun BaseTextField(value:String, onValueChange:(String) -> Unit, label:String){
+fun BaseTextField(
+    value:String,
+    onValueChange:(String) -> Unit,
+    label:String,
+    errorText:String,
+    isError:Boolean
+){
     TextField(
         value = value,
         onValueChange = onValueChange,
@@ -25,5 +31,7 @@ fun BaseTextField(value:String, onValueChange:(String) -> Unit, label:String){
             focusedTextColor = clairgreen,
             unfocusedTextColor = clairgreen
         ),
+        isError = isError,
+        supportingText = { Text(errorText) }
     )
 }

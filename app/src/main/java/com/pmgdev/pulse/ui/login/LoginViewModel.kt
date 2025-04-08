@@ -47,7 +47,7 @@ class LoginViewModel : ViewModel() {
     }
 
     fun onLoginClick(){
-        auth.signInWithEmailAndPassword(state.email,state.password).addOnCompleteListener{ test ->
+        auth.signInWithEmailAndPassword(state.email.trim(),state.password).addOnCompleteListener{ test ->
             if(test.isSuccessful){
                 Log.d("LOGIN","SIUUUUUUUU")
                 //Navegar

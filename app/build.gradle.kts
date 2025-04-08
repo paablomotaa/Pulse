@@ -1,11 +1,14 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("org.jetbrains.kotlin.kapt")
 
     //Firebase
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.compose.compiler)
+
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -74,6 +77,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.lottie.compose)
     implementation(libs.androidx.navigation.compose)
+
+
+    //Hilt
+    implementation(libs.hilt.library)
+    kapt(libs.hilt.compiler)
 
 
     //Firebase

@@ -24,7 +24,7 @@ import com.pmgdev.pulse.ui.theme.darkgreen
 import com.pmgdev.pulse.ui.theme.mediumgreen
 
 @Composable
-fun RegisterScreen(goToLogin: () -> Unit) {
+fun RegisterScreen(goToLogin: () -> Unit,viewModel:RegisterViewModel) {
     Column(
         modifier = Modifier.background(
             Brush.verticalGradient(colors = listOf(
@@ -36,15 +36,39 @@ fun RegisterScreen(goToLogin: () -> Unit) {
         Text("¡Bienvenido a Pulse!", fontSize = 30.sp, color = Color.White,textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth() )
         Spacer(modifier = Modifier.size(50.dp))
-        //BaseTextField("Nombre y apellidos")
+        BaseTextField(
+            value = viewModel.state.name,
+            label = "Nombre y apellidos",
+            onValueChange = {viewModel.onNameChange(it)},
+            isError = viewModel.state.isNameError,
+            errorText = viewModel.state.nameErrorText
+        )
         Spacer(modifier = Modifier.size(25.dp))
-        //BaseTextField("Fecha de nacimiento")
+        BaseTextField(
+            value = viewModel.state.date,
+            label = "Fecha de nacimiento",
+            onValueChange = {viewModel.onDateChange(it)},
+            isError = viewModel.state.isDateError,
+            errorText = viewModel.state.dateErrorText
+            )
         Spacer(modifier = Modifier.size(25.dp))
-        //BaseTextField("Email")
+        BaseTextField(
+            value = viewModel.state.email,
+            label = "Email",
+            onValueChange = {viewModel.onEmailChange(it)},
+            isError = viewModel.state.isEmailError,
+            errorText = viewModel.state.emailErrorText
+        )
         Spacer(modifier = Modifier.size(25.dp))
-        //BaseTextField("Password")
+        BaseTextField(
+            value = viewModel.state.password,
+            label = "Password",
+            onValueChange = {viewModel.onPasswordChange(it)},
+            isError = viewModel.state.isPasswordError,
+            errorText = viewModel.state.passwordErrorText
+            )
         Spacer(modifier = Modifier.size(25.dp))
-        Button(onClick = {}, modifier = Modifier.fillMaxWidth(0.7f), colors = ButtonColors(containerColor = mediumgreen, contentColor = Color.White, disabledContentColor = Color.Red, disabledContainerColor = Color.Red)) {
+        Button(onClick = {viewModel.onRegisterClick()}, modifier = Modifier.fillMaxWidth(0.7f), colors = ButtonColors(containerColor = mediumgreen, contentColor = Color.White, disabledContentColor = Color.Red, disabledContainerColor = Color.Red)) {
             Text("Sign Up")
         }
         Spacer(modifier = Modifier.size(25.dp))

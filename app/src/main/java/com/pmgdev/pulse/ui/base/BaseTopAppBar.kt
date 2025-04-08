@@ -12,15 +12,16 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.pmgdev.pulse.ui.theme.clairgreen
 import com.pmgdev.pulse.ui.theme.darkgray
 import com.pmgdev.pulse.ui.theme.darkgreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BaseTopAppBar(){
+fun BaseTopAppBar(title:String,actions:List<Action> = emptyList()){
     TopAppBar(
-        title = { Text("Feed") },
+        title = { Text(title) },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = darkgray,
             titleContentColor = Color.White
@@ -30,5 +31,23 @@ fun BaseTopAppBar(){
                 Icon(imageVector = Icons.Default.Menu, contentDescription = "", tint = Color.White)
             }
         },
+        actions = {
+            actions.forEach { action ->
+                IconButton(onClick = action.onClick) {
+                    Icon(
+                        imageVector = action.icon,
+                        contentDescription = action.contentDescription,
+                        tint = Color.White
+                    )
+                }
+
+            }
+        }
     )
 }
+
+data class Action(
+    val icon: ImageVector,
+    val contentDescription: String = "",
+    val onClick: () -> Unit
+)

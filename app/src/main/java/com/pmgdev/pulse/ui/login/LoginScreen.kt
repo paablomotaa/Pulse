@@ -40,7 +40,7 @@ fun LoginScreen(goToRegister: () -> Unit,viewModel: LoginViewModel) {
         Text("Cambia tus hábitos.", fontSize = 30.sp, color = Color.White,textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth() )
         Spacer(modifier = Modifier.size(50.dp))
-        BaseTextField(
+        /*BaseTextField(
             value = viewModel.state.email,
             onValueChange = { viewModel.onEmailChange(it) },
             label = "Email"
@@ -50,7 +50,7 @@ fun LoginScreen(goToRegister: () -> Unit,viewModel: LoginViewModel) {
             value = viewModel.state.password,
             onValueChange = { viewModel.onPasswordChange(it) },
             label = "Password"
-        )
+        )*/
         Spacer(modifier = Modifier.size(25.dp))
         Button(onClick = {viewModel.onLoginClick()}, modifier = Modifier.fillMaxWidth(0.7f), colors = ButtonColors(containerColor = mediumgreen, contentColor = Color.White, disabledContentColor = Color.Red, disabledContainerColor = Color.Red)) {
             Text("Login")

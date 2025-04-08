@@ -32,9 +32,9 @@ object NavAccount {
     }
     private fun NavGraphBuilder.registerAccount(navController: NavController){
         composable(route = register()){
-            RegisterScreen(
+            /*RegisterScreen(
                 goToLogin = {navController.navigate(login())}
-            )
+            )*/
         }
     }
 }
