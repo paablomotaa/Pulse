@@ -7,14 +7,14 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
-composeBom = "2024.04.01"
+composeBom = "2025.04.00"
 lottie = "6.0.0"
-navigation-compose = "2.7.6"
+navigation-compose = "2.8.9"
 firebase-bom = "33.12.0"
 google-services = "4.4.2"
 firebaseAuthKtx = "23.2.0"
+firebasestore = "23.2.0"
 dagger = "2.52"
-navigation = "2.8.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,9 +41,11 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
+firebase-restore-ktx = {group = "com.google.firebase", name = "firebase-firestore-ktx",version.ref= "firebasestore"}
 
-androidx-navigation-test = { module = "androidx.navigation:navigation-testing", version.ref = "navigation" }
-androidx-hilt-navigationcompose = "androidx.hilt:hilt-navigation-compose:1.2.0"
+#Hilt
+
+hilt-navigation = "androidx.hilt:hilt-navigation-compose:1.2.0"
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
 hilt-library = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
 

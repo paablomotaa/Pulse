@@ -1,5 +1,7 @@
 package com.pmgdev.pulse.repository.navigation
 
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -7,11 +9,18 @@ import androidx.navigation.navigation
 import com.pmgdev.pulse.repository.navigation.NavAccount.login
 import com.pmgdev.pulse.repository.navigation.NavAccount.register
 import com.pmgdev.pulse.ui.feed.FeedScreen
+import com.pmgdev.pulse.ui.feed.FeedScreenViewModel
 import com.pmgdev.pulse.ui.notifications.NotificationsScreen
 import com.pmgdev.pulse.ui.signup.RegisterScreen
 import com.pmgdev.pulse.ui.userprofile.ProfileScreen
+import com.pmgdev.pulse.ui.userprofile.ProfileScreenViewModel
 import com.pmgdev.pulse.ui.utilities.UtilitiesScreen
 
+/**
+ *
+ * Grafo de navegación del home una vez inicias sesión.
+ *
+ */
 object NavHome {
     const val ROUTE = "navhome"
 
@@ -35,7 +44,12 @@ object NavHome {
 
     private fun NavGraphBuilder.home(navController: NavController){
         composable(route = feedscreen()){
-            FeedScreen(navController)
+            val viewModel:FeedScreenViewModel = hiltViewModel()
+
+            FeedScreen(
+                navController,
+                viewModel = viewModel
+            )
         }
     }
     private fun NavGraphBuilder.utilities(navController: NavController){
@@ -50,7 +64,8 @@ object NavHome {
     }
     private fun NavGraphBuilder.profile(navController: NavController){
         composable(route = profilescreen()){
-            ProfileScreen(navController)
+            val viewModel: ProfileScreenViewModel = hiltViewModel()
+            ProfileScreen(navController,viewModel)
         }
     }
 }

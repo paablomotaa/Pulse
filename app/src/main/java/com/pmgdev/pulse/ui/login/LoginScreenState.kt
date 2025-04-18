@@ -7,6 +7,12 @@ data class LoginScreenState(
     val onEmailChange:String = "",
     val onPasswordChange:String = "",
 
+    val isEmailError:Boolean = false,
+    val isPasswordError:Boolean = false,
+
+    val emailErrorText:String = "",
+    val passwordErrorText:String = "",
+
     val success:Boolean = false,
     val emptyFields:Boolean = false,
     val generalError:Boolean = false

@@ -30,7 +30,9 @@ import com.pmgdev.pulse.ui.signup.RegisterViewModel
 import com.pmgdev.pulse.ui.theme.PulseTheme
 import com.pmgdev.pulse.ui.userprofile.ProfileScreen
 import com.pmgdev.pulse.ui.utilities.UtilitiesScreen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,17 +44,11 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .systemBarsPadding()
                 ) {
-                    val loginViewModel: LoginViewModel = viewModel()
-                    val registerViewModel:RegisterViewModel  = viewModel()
                     val navController = rememberNavController()
-                    /*NavHost(navController = navController, startDestination = NavHome.ROUTE){
-                        navHome(navController = navController)
-                    }*/
-
-                    RegisterScreen(
-                        {},
-                        registerViewModel
-                    )
+                    NavHost(navController = navController, startDestination = NavAccount.ROUTE){
+                        navAccount(navController)
+                        navHome(navController)
+                    }
                 }
             }
         }

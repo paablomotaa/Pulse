@@ -27,7 +27,7 @@ import com.pmgdev.pulse.ui.theme.darkgreen
 import com.pmgdev.pulse.ui.theme.mediumgreen
 
 @Composable
-fun LoginScreen(goToRegister: () -> Unit,viewModel: LoginViewModel) {
+fun LoginScreen(goToRegister: () -> Unit, viewModel: LoginViewModel, goToHome: () -> Unit) {
     Column(
         modifier = Modifier.background(Brush.verticalGradient(colors = listOf(
             darkgreen, dark))).fillMaxSize(),
@@ -40,19 +40,23 @@ fun LoginScreen(goToRegister: () -> Unit,viewModel: LoginViewModel) {
         Text("Cambia tus hábitos.", fontSize = 30.sp, color = Color.White,textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth() )
         Spacer(modifier = Modifier.size(50.dp))
-        /*BaseTextField(
+        BaseTextField(
             value = viewModel.state.email,
             onValueChange = { viewModel.onEmailChange(it) },
-            label = "Email"
+            label = "Email",
+            errorText = viewModel.state.emailErrorText,
+            isError = viewModel.state.isEmailError
         )
         Spacer(modifier = Modifier.size(25.dp))
         BaseTextField(
             value = viewModel.state.password,
             onValueChange = { viewModel.onPasswordChange(it) },
-            label = "Password"
-        )*/
+            label = "Password",
+            errorText = viewModel.state.passwordErrorText,
+            isError = viewModel.state.isPasswordError
+        )
         Spacer(modifier = Modifier.size(25.dp))
-        Button(onClick = {viewModel.onLoginClick()}, modifier = Modifier.fillMaxWidth(0.7f), colors = ButtonColors(containerColor = mediumgreen, contentColor = Color.White, disabledContentColor = Color.Red, disabledContainerColor = Color.Red)) {
+        Button(onClick = {viewModel.onLoginClick(goToHome)}, modifier = Modifier.fillMaxWidth(0.7f), colors = ButtonColors(containerColor = mediumgreen, contentColor = Color.White, disabledContentColor = Color.Red, disabledContainerColor = Color.Red)) {
             Text("Login")
         }
         Spacer(modifier = Modifier.size(25.dp))

@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,10 +22,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -32,28 +32,47 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.google.type.Date
 import com.pmgdev.pulse.R
+import com.pmgdev.pulse.repository.model.Post
 import com.pmgdev.pulse.repository.model.User
-import com.pmgdev.pulse.ui.base.BaseNavigationBar
 import com.pmgdev.pulse.ui.base.BaseScaffold
-import com.pmgdev.pulse.ui.base.BaseTopAppBar
+import com.pmgdev.pulse.ui.base.LoadingScreen
 import com.pmgdev.pulse.ui.theme.clairgreen
 import com.pmgdev.pulse.ui.theme.dark
 
+
 @Composable
-fun FeedScreen(navController: NavController){
+fun FeedScreen(navController:NavController,viewModel: FeedScreenViewModel){
+
     BaseScaffold(
         title = "Feed",
         navController = navController
     ) { paddingValues ->
+        when (viewModel.state) {
+            is FeedScreenState.Loading -> {
+                LoadingScreen(paddingValues)
+            }
+
+            is FeedScreenState.Success -> {
+                FeedScreenContent(paddingValues)
+            }
+            is FeedScreenState.NoData -> {
+                //NoDataScreen()
+            }
+        }
+    }
+}
+
+@Composable
+fun FeedScreenContent(paddingValues:PaddingValues){
     val users = listOf(
-        User(
+        Post(
             username = "paablomotaa",
             image = painterResource(R.drawable.ic_launcher_foreground),
-            imagePost = painterResource(R.drawable.logo_pulse_transparent)
+            imagePost = painterResource(R.drawable.logo_pulse_transparent),
         ),
-        User(
+        Post(
             username = "pablomota2",
             image = painterResource(R.drawable.logo_pulse_transparent),
             imagePost = painterResource(R.drawable.ic_launcher_background)
@@ -70,10 +89,9 @@ fun FeedScreen(navController: NavController){
             }
         }
     }
-    }
 }
 @Composable
-fun FeedItem(user: User) {
+fun FeedItem(user: Post) {
 
     Card(
         onClick = {},

@@ -82,10 +82,12 @@ dependencies {
     //Hilt
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)
+    implementation(libs.hilt.navigation)
 
 
     //Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics.ktx)
+    implementation(libs.firebase.restore.ktx)
 }

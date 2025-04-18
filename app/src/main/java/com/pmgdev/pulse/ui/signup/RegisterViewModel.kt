@@ -5,13 +5,35 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.pmgdev.pulse.repository.firebaserepository.UserRepository
+import com.pmgdev.pulse.repository.model.User
+import com.pmgdev.pulse.utils.ValidatePassword
 import com.pmgdev.pulse.utils.isValidEmail
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import java.util.Date
+import javax.inject.Inject
 
-class RegisterViewModel : ViewModel() {
+
+/**
+ *
+ * RegisterViewModel
+ *
+ * Aun se deben añadir muchos campos(inclusive el datepicker correctamente)
+ * para probar funciona correctamente.
+ *
+ */
+
+@HiltViewModel
+class RegisterViewModel @Inject constructor(
+    private val auth: FirebaseAuth,
+    val repository: UserRepository
+) : ViewModel() {
     var state by mutableStateOf(RegisterScreenState())
         private set
-    val auth:FirebaseAuth = FirebaseAuth.getInstance()
 
     fun onNameChange(name:String){
         if(name.isEmpty()){
@@ -82,11 +104,11 @@ class RegisterViewModel : ViewModel() {
                 passwordErrorText = "Esta vacío"
             )
         }
-        if(password.length < 6){
+        if(password.length < 6 || !ValidatePassword(password)){
             state = state.copy(
                 password = password,
                 isPasswordError = true,
-                passwordErrorText = "La contraseña no puede ser menor de 6 carácteres"
+                passwordErrorText = "La contraseña debe tener al menos 6 carácteres, una mayúscula, un caracter especial y un dígito."
             )
         }
         else{
@@ -97,7 +119,7 @@ class RegisterViewModel : ViewModel() {
             )
         }
     }
-    fun onRegisterClick(){
+    fun onRegisterClick(goToLogin: () -> Unit) {
         if (validateFields()){
             return
         }
@@ -107,7 +129,23 @@ class RegisterViewModel : ViewModel() {
         else{
             auth.createUserWithEmailAndPassword(state.email,state.password).addOnCompleteListener{ test ->
                 if(test.isSuccessful){
-                    Log.d("SUCCESS","SUCESS")
+
+                    val user = auth.currentUser
+                    val newUser = User(
+                        uid = user?.uid ?: "",
+                        username = "example",
+                        email = state.email,
+                        fullname = state.name,
+                        bio = "",
+                        peso = 0,
+                        altura = 0,
+                        created_at = Date(),
+                        followers = 0,
+                        following = 0,
+                    )
+                    viewModelScope.launch {
+                        repository.addUser(newUser)
+                    }
                 }
                 else{
                     Log.d("FAILED","FAILED")
@@ -117,7 +155,7 @@ class RegisterViewModel : ViewModel() {
     }
 
     private fun hasEmptyFields():Boolean{
-        var hasEmptyFields:Boolean = false
+        var hasEmptyFields = false
 
         if(state.name.isEmpty()){
             state = state.copy(

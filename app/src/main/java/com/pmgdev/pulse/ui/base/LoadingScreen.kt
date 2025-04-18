@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,7 +22,7 @@ import com.pmgdev.pulse.ui.theme.clairgreen
 import com.pmgdev.pulse.ui.theme.dark
 
 @Composable
-fun LoadingScreen() {
+fun LoadingScreen(paddingValues: PaddingValues) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loadinglottie))
     val progress by animateLottieCompositionAsState(
         composition,
