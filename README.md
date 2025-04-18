@@ -9,10 +9,12 @@ y unirte a una comunidad apasionada por el deporte.
 # 1.0.0 Beta
 
 - Creación de interfaz básica para ir probando el funcionamiento del Login y el Register.
+
 ![image](https://github.com/user-attachments/assets/6c8e4035-7570-4323-be70-0fdaeff9c338)
 ![image](https://github.com/user-attachments/assets/d3fa6c75-4ff5-4e5e-bf91-755185a72660)
 
 - Interfaz básica del feed, notifications y profile con la carga de los datos del usuario.
+
 ![image](https://github.com/user-attachments/assets/006005de-6a63-4624-90d0-52c6348e3fe7)
 ![image](https://github.com/user-attachments/assets/4e656f05-450b-413c-ad1c-c6c0c4d1d37f)
 ![image](https://github.com/user-attachments/assets/024ed1ac-1f09-43ef-90f0-392678289fe6)
