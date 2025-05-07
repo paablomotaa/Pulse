@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pmgdev.pulse.R
+import com.pmgdev.pulse.ui.base.BasePasswordField
 import com.pmgdev.pulse.ui.base.BaseTextField
 import com.pmgdev.pulse.ui.theme.dark
 import com.pmgdev.pulse.ui.theme.darkgreen
@@ -48,11 +49,9 @@ fun LoginScreen(goToRegister: () -> Unit, viewModel: LoginViewModel, goToHome: (
             isError = viewModel.state.isEmailError
         )
         Spacer(modifier = Modifier.size(25.dp))
-        BaseTextField(
-            value = viewModel.state.password,
-            onValueChange = { viewModel.onPasswordChange(it) },
-            label = "Password",
-            errorText = viewModel.state.passwordErrorText,
+        BasePasswordField(
+            password = viewModel.state.password,
+            onValueChange = {viewModel.onPasswordChange(it)},
             isError = viewModel.state.isPasswordError
         )
         Spacer(modifier = Modifier.size(25.dp))

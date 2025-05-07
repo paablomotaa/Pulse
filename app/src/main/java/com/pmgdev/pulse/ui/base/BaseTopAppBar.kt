@@ -19,7 +19,12 @@ import com.pmgdev.pulse.ui.theme.darkgreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BaseTopAppBar(title:String,actions:List<Action> = emptyList()){
+fun BaseTopAppBar(
+    title:String,
+    actions:List<Action> = emptyList(),
+    navIcon: ImageVector,
+    navAction:()->Unit,
+){
     TopAppBar(
         title = { Text(title) },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -27,8 +32,8 @@ fun BaseTopAppBar(title:String,actions:List<Action> = emptyList()){
             titleContentColor = Color.White
         ),
         navigationIcon = {
-            IconButton(onClick = {}) {
-                Icon(imageVector = Icons.Default.Menu, contentDescription = "", tint = Color.White)
+            IconButton(onClick = navAction) {
+                Icon(imageVector = navIcon, contentDescription = "", tint = Color.White)
             }
         },
         actions = {

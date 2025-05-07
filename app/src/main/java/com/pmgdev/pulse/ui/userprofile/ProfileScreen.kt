@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -35,12 +37,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.pmgdev.pulse.R
 import com.pmgdev.pulse.repository.model.User
+import com.pmgdev.pulse.ui.base.BaseButton
 import com.pmgdev.pulse.ui.base.BaseScaffold
 import com.pmgdev.pulse.ui.base.LoadingScreen
 import com.pmgdev.pulse.ui.theme.clairgreen
 import com.pmgdev.pulse.ui.theme.dark
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProfileScreen(navController: NavController,viewModel: ProfileScreenViewModel){
     BaseScaffold(
@@ -74,7 +76,7 @@ fun ProfileScreenContent(paddingValues: PaddingValues, user: User?){
             contentAlignment = Alignment.TopStart
         ) {
                 Column(
-                    modifier = Modifier,
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Image(
@@ -86,11 +88,10 @@ fun ProfileScreenContent(paddingValues: PaddingValues, user: User?){
                         contentDescription = "",
                     )
                     Surface(
-                        modifier = Modifier.padding(16.dp).shadow(5.dp),
+                        modifier = Modifier.padding(30.dp).shadow(5.dp),
                         shape = MaterialTheme.shapes.medium,
                         color = dark
                     ) {
-                        Spacer(modifier = Modifier.height(16.dp))
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -98,7 +99,7 @@ fun ProfileScreenContent(paddingValues: PaddingValues, user: User?){
                             Text(user?.fullname ?: "NOT FOUND", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White)
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = user?.bio ?: "No hay descripción ni bio. En ajustes puede cambiarla.",
+                                text = user?.bio ?: "",
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontSize = 16.sp,
                                 color = Color.White,
@@ -107,9 +108,10 @@ fun ProfileScreenContent(paddingValues: PaddingValues, user: User?){
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(32.dp),
+                                horizontalArrangement = Arrangement.spacedBy(22.dp),
                                 verticalAlignment = Alignment.CenterVertically  
                             ) {
+                                Spacer(Modifier.size(5.dp))
                                 Column {
                                     Text("257", color = Color.White)
                                     Text("Posts",color = Color.White)
@@ -134,8 +136,10 @@ fun ProfileScreenContent(paddingValues: PaddingValues, user: User?){
                                     Text(user?.following.toString(),color = Color.White)
                                     Text("Following", color = Color.White)
                                 }
+                                Spacer(Modifier.size(5.dp))
                             }
                             Spacer(modifier = Modifier.height(16.dp))
+                            BaseButton(onClick = {}, label = "Editar perfil")
                             /*Button(onClick = {}, modifier = Modifier.fillMaxWidth(0.5f), colors = ButtonColors(containerColor = mediumgreen, contentColor = Color.White, disabledContentColor = Color.Red, disabledContainerColor = Color.Red)) {
                                 Row(
                                     modifier = Modifier,

@@ -119,6 +119,26 @@ class RegisterViewModel @Inject constructor(
             )
         }
     }
+    fun onUsernameChange(username:String){
+        if(username.contains(' ')){
+            return
+        }
+
+        if(username.isEmpty()){
+            state = state.copy(
+                username = state.username,
+                isUsernameError = false,
+                usernameErrorText = ""
+            )
+        }
+        else{
+            state = state.copy(
+                username = state.username,
+                isUsernameError = true,
+                usernameErrorText = ""
+            )
+        }
+    }
     fun onRegisterClick(goToLogin: () -> Unit) {
         if (validateFields()){
             return
@@ -146,6 +166,7 @@ class RegisterViewModel @Inject constructor(
                     viewModelScope.launch {
                         repository.addUser(newUser)
                     }
+                    goToLogin()
                 }
                 else{
                     Log.d("FAILED","FAILED")

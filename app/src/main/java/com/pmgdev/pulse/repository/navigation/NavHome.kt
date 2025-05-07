@@ -1,17 +1,19 @@
 package com.pmgdev.pulse.repository.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.pmgdev.pulse.repository.navigation.NavAccount.login
-import com.pmgdev.pulse.repository.navigation.NavAccount.register
 import com.pmgdev.pulse.ui.feed.FeedScreen
 import com.pmgdev.pulse.ui.feed.FeedScreenViewModel
+import com.pmgdev.pulse.ui.imagepost.ImagePostScreen
+import com.pmgdev.pulse.ui.imagepost.ImagePostViewModel
 import com.pmgdev.pulse.ui.notifications.NotificationsScreen
-import com.pmgdev.pulse.ui.signup.RegisterScreen
+import com.pmgdev.pulse.ui.previewpost.PostDetailScreen
+import com.pmgdev.pulse.ui.previewpost.PreviewPostViewModel
 import com.pmgdev.pulse.ui.userprofile.ProfileScreen
 import com.pmgdev.pulse.ui.userprofile.ProfileScreenViewModel
 import com.pmgdev.pulse.ui.utilities.UtilitiesScreen
@@ -28,6 +30,8 @@ object NavHome {
     fun utilitiesscreen() = "$ROUTE/utilities"
     fun notificationsscreen() = "$ROUTE/notifications"
     fun profilescreen() = "$ROUTE/profile"
+    fun imagepostscreen() = "$ROUTE/imagepost"
+    fun postPreview(postId: String = "{postId}") = "$ROUTE/postpreview/$postId"
 
     fun NavGraphBuilder.navHome(
         navController: NavController
@@ -39,6 +43,8 @@ object NavHome {
             utilities(navController)
             notifications(navController)
             profile(navController)
+            imagepost(navController)
+            postPreview(navController)
         }
     }
 
@@ -48,7 +54,11 @@ object NavHome {
 
             FeedScreen(
                 navController,
-                viewModel = viewModel
+                viewModel = viewModel,
+                goToImagePost = {navController.navigate(imagepostscreen())},
+                goToPostPreview = { postId ->
+                    navController.navigate(NavHome.postPreview(postId))
+                }
             )
         }
     }
@@ -66,6 +76,25 @@ object NavHome {
         composable(route = profilescreen()){
             val viewModel: ProfileScreenViewModel = hiltViewModel()
             ProfileScreen(navController,viewModel)
+        }
+    }
+    private fun NavGraphBuilder.imagepost(navController: NavController){
+        composable(route = imagepostscreen()){
+            val viewModel: ImagePostViewModel = hiltViewModel()
+            ImagePostScreen(navController,viewModel,{navController.popBackStack()})
+        }
+    }
+    private fun NavGraphBuilder.postPreview(navController: NavController) {
+        composable(
+            route = "$ROUTE/postpreview/{postId}"
+        ) { backStackEntry ->
+            val postId = backStackEntry.arguments?.getString("postId") ?: ""
+            val viewModel: PreviewPostViewModel = hiltViewModel()
+            PostDetailScreen(
+                post = postId, viewModel = viewModel,
+                onBack = { navController.popBackStack()},
+                navController = navController,
+            )
         }
     }
 }

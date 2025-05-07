@@ -2,6 +2,7 @@ package com.pmgdev.pulse.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.pmgdev.pulse.repository.firebaserepository.UserRepository
 import dagger.Module
 import dagger.Provides
@@ -25,7 +26,12 @@ object AppModule {
     }
     @Singleton
     @Provides
-    fun providerepository(firestore: FirebaseFirestore,auth: FirebaseAuth): UserRepository{
+    fun provideRepository(firestore: FirebaseFirestore,auth: FirebaseAuth): UserRepository{
         return UserRepository(firestore,auth)
+    }
+    @Singleton
+    @Provides
+    fun provideStorage(): FirebaseStorage{
+        return FirebaseStorage.getInstance()
     }
 }

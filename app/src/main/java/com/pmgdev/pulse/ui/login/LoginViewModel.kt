@@ -74,15 +74,17 @@ class LoginViewModel @Inject constructor(private val auth: FirebaseAuth) : ViewM
         if(hasEmptyFields()){
             return
         }
-        auth.signInWithEmailAndPassword(state.email.trim(),state.password).addOnCompleteListener{ test ->
+        Log.d("LOGIN","ENTRO AL LOGIN")
+        auth.signInWithEmailAndPassword(state.email.trim(),state.password.trim()).addOnCompleteListener{ test ->
             if(test.isSuccessful){
-                Log.d("LOGIN","SIUUUUUUUU")
+                Log.d("LOGIN","LOGIN CORRECTO")
                 goToHome()
             }
             else{
-                Log.d("ERROR","NO LOGIN")
+                Log.e("ERROR","Error ${test.exception?.message}")
             }
         }
+        Log.d("log", "User logged: " + auth.currentUser?.email.toString())
     }
 
     private fun hasEmptyFields():Boolean{

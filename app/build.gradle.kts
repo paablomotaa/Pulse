@@ -77,6 +77,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.lottie.compose)
     implementation(libs.androidx.navigation.compose)
+    implementation("com.google.firebase:firebase-appcheck-debug")
 
 
     //Hilt
@@ -90,4 +91,8 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics.ktx)
     implementation(libs.firebase.restore.ktx)
+    implementation(libs.firebase.storage)
+
+    //Coil
+    implementation(libs.coil.compose)
 }
