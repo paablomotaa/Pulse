@@ -1,5 +1,6 @@
 package com.pmgdev.pulse.ui.utilities
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,6 +17,10 @@ import com.pmgdev.pulse.BuildConfig
 class UtilitiesViewModel @Inject constructor() : ViewModel() {
     var uiState by mutableStateOf(UtilitiesState())
         private set
+
+    init {
+        Log.d("APIKEY22222222","🔑 API_KEY usada: ${BuildConfig.API_KEY}")
+    }
 
     //La APIKey la he quitado de aquí por seguridad y se queda guardada en local.properties
     private val generativeModel = GenerativeModel(

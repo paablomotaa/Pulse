@@ -14,6 +14,8 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.pmgdev.pulse.repository.navigation.NavHome
 import com.pmgdev.pulse.ui.theme.dark
+import com.pmgdev.pulse.ui.theme.mediumgreen
 
 @Composable
 fun BaseNavigationBar(navController: NavController) {
@@ -53,7 +56,14 @@ fun BaseNavigationBar(navController: NavController) {
                         launchSingleTop = true
                         restoreState = true
                     }
-                }
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color.White,
+                    selectedTextColor = Color.White,
+                    unselectedIconColor = Color.White,
+                    unselectedTextColor = Color.White,
+                    indicatorColor = mediumgreen
+                )
             )
         }
     }

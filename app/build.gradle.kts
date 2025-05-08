@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -26,10 +28,18 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        val props = Properties()
 
-        val apiKeyValue = project.properties["apiKey"] as String? ?: "\"KEY_NOT_SET\""
+        val propFile = file("../local.properties")
 
-        buildConfigField("String", "API_KEY", apiKeyValue)
+        if (propFile.exists()) {
+            props.load(propFile.inputStream())
+            val apiKey = props.getProperty("apiKey", "KEY_NOT_SET")
+            buildConfigField("String", "API_KEY", "\"$apiKey\"")
+        } else {
+            buildConfigField("String", "API_KEY", "\"KEY_NOT_SET\"")
+            println("local.properties NO encontrado en ${propFile.absolutePath}")
+        }
     }
 
     buildTypes {

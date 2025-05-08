@@ -12,9 +12,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.pmgdev.pulse.ui.theme.mediumgreen
 
 @Composable
 fun BaseScaffold(
@@ -40,7 +42,9 @@ fun BaseScaffold(
                 FloatingActionButton(onClick = {
                     floatingAction()
                 },
-                        modifier = Modifier.offset(y = 30.dp)
+                    modifier = Modifier.offset(y = 30.dp),
+                    containerColor = mediumgreen,
+                    contentColor = Color.White
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
