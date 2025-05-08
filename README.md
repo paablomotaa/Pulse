@@ -12,15 +12,15 @@ y unirte a una comunidad apasionada por el deporte.
 ![image](https://github.com/user-attachments/assets/8ab71018-2c66-4429-b3ce-ab46e64d0813)
 ![image](https://github.com/user-attachments/assets/ab80da87-7f49-4536-add9-c211b3124c7a)
 
-- Nuevas funcionalidades 🔥
+- Subida de publicaciones y feed aun no actualizable.
 
-Subida de publicaciones y feed aun no actualizable.
 ![image](https://github.com/user-attachments/assets/eb98b6f0-3b9f-41fd-bf7e-3d6e6231a4fb)
 
-Vista previa de publicaciones y sistema de comentarios funcional.
+- Vista previa de publicaciones y sistema de comentarios funcional.
+
 ![image](https://github.com/user-attachments/assets/de80f115-8802-4527-9be8-6a4204d00a60)
 
-Pestaña de IA que proporciona consejos sobre dietas según tus estadísticas
+- Pestaña de IA que proporciona consejos sobre dietas según tus estadísticas con la API de Gemini.
 
 ![image](https://github.com/user-attachments/assets/ef6e2c46-42d6-41aa-8bf2-8512c2bf42a5)
 
