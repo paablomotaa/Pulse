@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
@@ -32,6 +33,7 @@ import coil.compose.AsyncImage
 import com.pmgdev.pulse.repository.model.Comment
 import com.pmgdev.pulse.repository.model.Post
 import com.pmgdev.pulse.ui.base.Action
+import com.pmgdev.pulse.ui.base.BaseButton
 import com.pmgdev.pulse.ui.base.BaseScaffold
 import com.pmgdev.pulse.ui.base.LoadingScreen
 import com.pmgdev.pulse.ui.theme.clairgreen
@@ -150,19 +152,16 @@ fun PostDetailContent(
                                 placeholder = { Text("Escribe un comentario...") },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(Color.White, shape = MaterialTheme.shapes.small)
+                                    .background(Color.White, shape = RoundedCornerShape(percent = 50))
                             )
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            Button(
-                                onClick = {
-                                    viewModel.postComment(post.uid)
-                                },
-                                modifier = Modifier.align(Alignment.End)
-                            ) {
-                                Text("Enviar")
-                            }
+                            BaseButton(
+                                onClick = {viewModel.postComment(post.uid)},
+                                modifier = Modifier.align(Alignment.End),
+                                label = "Enviar"
+                            )
                         }
                     }
                 }

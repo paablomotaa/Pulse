@@ -17,6 +17,7 @@ import com.pmgdev.pulse.ui.previewpost.PreviewPostViewModel
 import com.pmgdev.pulse.ui.userprofile.ProfileScreen
 import com.pmgdev.pulse.ui.userprofile.ProfileScreenViewModel
 import com.pmgdev.pulse.ui.utilities.UtilitiesScreen
+import com.pmgdev.pulse.ui.utilities.UtilitiesViewModel
 
 /**
  *
@@ -64,7 +65,8 @@ object NavHome {
     }
     private fun NavGraphBuilder.utilities(navController: NavController){
         composable(route = utilitiesscreen()){
-            UtilitiesScreen(navController)
+            val viewModel: UtilitiesViewModel = hiltViewModel()
+            UtilitiesScreen(viewModel,navController)
         }
     }
     private fun NavGraphBuilder.notifications(navController: NavController){

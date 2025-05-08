@@ -25,8 +25,8 @@ fun BaseTextField(
     value:String,
     onValueChange:(String) -> Unit,
     label:String,
-    errorText:String,
-    isError:Boolean
+    errorText:String = "",
+    isError:Boolean = false
 ){
     TextField(
         value = value,

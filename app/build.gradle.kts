@@ -26,6 +26,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val apiKeyValue = project.properties["apiKey"] as String? ?: "\"KEY_NOT_SET\""
+
+        buildConfigField("String", "API_KEY", apiKeyValue)
     }
 
     buildTypes {
@@ -46,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -80,6 +85,7 @@ dependencies {
     implementation("com.google.firebase:firebase-appcheck-debug")
 
 
+
     //Hilt
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)
@@ -95,4 +101,13 @@ dependencies {
 
     //Coil
     implementation(libs.coil.compose)
+
+    //retrofit
+    implementation(libs.retrofit)
+
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp.logging)
+    implementation(libs.gson)
+
+    implementation("com.google.ai.client.generativeai:generativeai:0.3.0")
 }
