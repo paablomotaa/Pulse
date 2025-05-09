@@ -11,6 +11,14 @@ import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import javax.inject.Inject
 
+/**
+ *
+ * Post repository
+ *
+ * Sentencias para acceder a la base de datos y a la coleccion de Posts y la subcoleccion Comments.
+ *
+ */
+
 class PostRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firestorage: FirebaseStorage

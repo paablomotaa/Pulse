@@ -37,11 +37,16 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation-compose" }
-firebase-storage = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebase-storage" }
+
+
+#Retrofit
+
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 okhttp-logging = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp-logging" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+
+
 
 #Firebase
 
@@ -50,7 +55,8 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 firebase-restore-ktx = {group = "com.google.firebase", name = "firebase-firestore-ktx",version.ref= "firebasestore"}
-
+firebase-appcheck-debug = "com.google.firebase:firebase-appcheck-debug:17.0.0"
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebase-storage" }
 
 #Hilt
 
@@ -62,7 +68,8 @@ hilt-library = { module = "com.google.dagger:hilt-android", version.ref = "dagge
 
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version = "2.5.0" }
 
-
+#Gemini
+generative-ai-client = "com.google.ai.client.generativeai:generativeai:0.3.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

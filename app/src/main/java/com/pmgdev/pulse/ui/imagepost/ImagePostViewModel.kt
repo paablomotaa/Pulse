@@ -17,6 +17,16 @@ import com.pmgdev.pulse.repository.firebaserepository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 
+/**
+ *
+ * ImagePost
+ *
+ * Para subir publicaciones. Podremos asignar imagen y descripción.
+ * Esta información se guardará tanto en firestorage como en firestore
+ *
+ *
+ */
+
 @HiltViewModel
 class ImagePostViewModel @Inject constructor(
     private val firebaseStorage: FirebaseStorage,

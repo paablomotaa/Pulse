@@ -12,15 +12,21 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.pmgdev.pulse.BuildConfig
 
+/**
+ *
+ * ViewModel de la pestaña Utilities
+ *
+ * Aquí irán todas las funcionalidades que se puedan.
+ *
+ * Actualización 2.0.0
+ * Añadido Gemini 13.0.1
+ *
+ */
 
 @HiltViewModel
 class UtilitiesViewModel @Inject constructor() : ViewModel() {
     var uiState by mutableStateOf(UtilitiesState())
         private set
-
-    init {
-        Log.d("APIKEY22222222","🔑 API_KEY usada: ${BuildConfig.API_KEY}")
-    }
 
     //La APIKey la he quitado de aquí por seguridad y se queda guardada en local.properties
     private val generativeModel = GenerativeModel(
@@ -41,6 +47,13 @@ class UtilitiesViewModel @Inject constructor() : ViewModel() {
         uiState = uiState.copy(objetivo = objetivo)
     }
 
+    /**
+     *
+     * Metodo getPersonalizedDietAdvice
+     *
+     * Utilizando el cliente para contactar con el modelo, hacemos la consulta a Gemini.
+     * Comprobamos si lo que nos devuelve no es error y se le muestra al usuario.
+     */
     fun getPersonalizedDietAdvice() {
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true, errorMessage = null, dietAdvice = null)
@@ -63,7 +76,6 @@ class UtilitiesViewModel @Inject constructor() : ViewModel() {
                 )
                 return@launch
             }
-            //Consulta al modelo de IA generativo
             val prompt = """
                 Eres un asistente virtual especializado en nutrición y dietas saludables.
                 Un usuario te pide consejo sobre su dieta.

@@ -23,7 +23,8 @@ import javax.inject.Inject
  *
  * FeedViewModel
  *
- * Esto no es más que una vista previa muy lejana de lo que será realmente el feed.
+ * Recoge todo el contenido de la base de datos ordenado por fecha de subida
+ * Le puse muchos controles por el tema de que no me iba bien
  *
  */
 @HiltViewModel
@@ -54,7 +55,7 @@ class FeedScreenViewModel @Inject constructor(
                 }
                 .addOnFailureListener {
                     Log.e("ERROR","NO CONSIGUE LOS DATOS")
-                    state = FeedScreenState.NoData // O puedes agregar un estado de error
+                    state = FeedScreenState.NoData
                 }
         }
     }

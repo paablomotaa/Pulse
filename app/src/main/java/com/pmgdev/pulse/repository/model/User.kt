@@ -9,7 +9,7 @@ import java.util.Date
  *
  * Modelo User
  *
- * Aun le quedan algunos campos por meter que no he implementado.
+ * Le queda hacer la subcoleccion de followers y following
  * Constructor vacío necesario para firestore.
  *
  */

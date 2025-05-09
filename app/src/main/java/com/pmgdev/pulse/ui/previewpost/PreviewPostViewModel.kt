@@ -16,6 +16,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+/**
+ *
+ * PreviewPost
+ * ViewModel para ver el preview. Con el método uploadImage
+ * Cargamos la imagen pasandole el UID por navegación por parámetros.
+ *
+ * Tenemos los demás métodos para los comentarios. El de observecomments es para que la
+ * vista se pueda actualizar si hay algun cambio en la base de datos.
+ *
+ */
 @HiltViewModel
 class PreviewPostViewModel @Inject constructor(
     private val postRepository: PostRepository,
@@ -56,7 +67,15 @@ class PreviewPostViewModel @Inject constructor(
         )
     }
 
-
+    /**
+     *
+     * PostComent
+     * @param uid
+     *
+     * Le pasamos el uid del usuario para tener un control de quien ha puesto el comentario.
+     * Además, el método también incrementa en uno el número de likes que se guarda en la base de datos
+     *
+     */
     fun postComment(uid: String) {
         val uiduser = auth.currentUser?.uid
         viewModelScope.launch {

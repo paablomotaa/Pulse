@@ -13,7 +13,7 @@ import javax.inject.Inject
  *
  * User repository
  *
- * Sentencias para acceder a la base de datos.
+ * Sentencias para acceder a la base de datos y a la coleccion de Users.
  *
  */
 

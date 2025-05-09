@@ -92,7 +92,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.lottie.compose)
     implementation(libs.androidx.navigation.compose)
-    implementation("com.google.firebase:firebase-appcheck-debug")
 
 
 
@@ -108,6 +107,7 @@ dependencies {
     implementation(libs.firebase.crashlytics.ktx)
     implementation(libs.firebase.restore.ktx)
     implementation(libs.firebase.storage)
+    implementation(libs.firebase.appcheck.debug)
 
     //Coil
     implementation(libs.coil.compose)
@@ -119,5 +119,6 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.gson)
 
-    implementation("com.google.ai.client.generativeai:generativeai:0.3.0")
+    implementation(libs.generative.ai.client)
+
 }
