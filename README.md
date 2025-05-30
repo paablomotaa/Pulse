@@ -13,18 +13,27 @@ y unirte a una comunidad apasionada por el deporte.
 
 ![image](https://github.com/user-attachments/assets/816c07c0-231a-4bfd-9950-193de24d9906)
 
-Mejora del perfil. Ahora se podrán ver las publicaciones que ha subido cada usuario y acceder al mismo.
+Mejora del perfil. Ahora se podrán ver las publicaciones que ha subido cada usuario y acceder al mismo. Podremos editar nuestro perfil a nuestro gusto. La otra vista es para los otros usuarios.
 ![image](https://github.com/user-attachments/assets/5494f4fa-71d3-4a33-99f7-ba008a53f465)
 ![image](https://github.com/user-attachments/assets/91d76ebb-eed9-4272-9710-4acd533a4286)
 ![image](https://github.com/user-attachments/assets/be9cede7-ee2c-4f91-b58d-2153beda835f)
 
-
-
-
-
 - Integración del chat
 
+Nuevo chat integrado para hablar entre usuarios. Tendremos el listado de usuarios que se accede desde el feed. Para iniciar un nuevo chat iremos al perfil del usuario con el que queramos hablar y le daremos al botón de enviar mensaje.
+![image](https://github.com/user-attachments/assets/7cbcea65-567b-4c59-8911-3e664aed2491)
+Vista previa del chat funcional
+![image](https://github.com/user-attachments/assets/c86a6031-bf10-4e99-85b4-9e25483b8c29)
+
+
+
 - Integración de Google fits
+![image](https://github.com/user-attachments/assets/4d544b16-c706-43d4-9a8e-f6f14a4b9b3f)
+![image](https://github.com/user-attachments/assets/dc0d0a43-7e89-4ba5-aeda-a8a152ee09f6)
+![image](https://github.com/user-attachments/assets/eafea808-36d7-4800-bdd1-0ff3397cdf8c)
+
+
+
 
 ## 2.0.0 Beta
 - Mejora del perfil y el feed 🆙
