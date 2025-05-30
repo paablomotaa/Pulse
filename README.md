@@ -10,6 +10,18 @@ y unirte a una comunidad apasionada por el deporte.
 
 - Mejora del perfil y del feed
 
+
+![image](https://github.com/user-attachments/assets/816c07c0-231a-4bfd-9950-193de24d9906)
+
+Mejora del perfil. Ahora se podrán ver las publicaciones que ha subido cada usuario y acceder al mismo.
+![image](https://github.com/user-attachments/assets/5494f4fa-71d3-4a33-99f7-ba008a53f465)
+![image](https://github.com/user-attachments/assets/91d76ebb-eed9-4272-9710-4acd533a4286)
+![image](https://github.com/user-attachments/assets/be9cede7-ee2c-4f91-b58d-2153beda835f)
+
+
+
+
+
 - Integración del chat
 
 - Integración de Google fits
