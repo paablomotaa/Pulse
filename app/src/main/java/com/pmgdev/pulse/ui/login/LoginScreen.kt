@@ -21,8 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pmgdev.pulse.R
-import com.pmgdev.pulse.ui.base.BasePasswordField
-import com.pmgdev.pulse.ui.base.BaseTextField
+import com.pmgdev.pulse.ui.base.composables.BasePasswordField
+import com.pmgdev.pulse.ui.base.composables.BaseTextField
 import com.pmgdev.pulse.ui.theme.dark
 import com.pmgdev.pulse.ui.theme.darkgreen
 import com.pmgdev.pulse.ui.theme.mediumgreen

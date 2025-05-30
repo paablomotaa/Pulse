@@ -1,11 +1,9 @@
-package com.pmgdev.pulse.ui.base
+package com.pmgdev.pulse.ui.base.composables
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -26,7 +24,7 @@ fun BaseScaffold(
     showActionButton:Boolean = false,
     floatingAction: () -> Unit = {},
     actions: List<Action> = emptyList(),
-    navIcon:ImageVector = Icons.Default.Menu,
+    navIcon:ImageVector? = null,
     navIconAction:()-> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {

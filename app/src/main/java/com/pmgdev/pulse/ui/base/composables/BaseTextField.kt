@@ -1,5 +1,6 @@
-package com.pmgdev.pulse.ui.base
+package com.pmgdev.pulse.ui.base.composables
 
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
@@ -14,6 +15,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.pmgdev.pulse.ui.theme.clairgreen
@@ -25,12 +28,14 @@ fun BaseTextField(
     value:String,
     onValueChange:(String) -> Unit,
     label:String,
+    modifier: Modifier = Modifier,
     errorText:String = "",
     isError:Boolean = false
 ){
     TextField(
         value = value,
         onValueChange = onValueChange,
+        modifier = modifier,
         label = { Text(label, color = clairgreen) },
         colors = TextFieldDefaults.colors(
             focusedContainerColor = darkgray,
@@ -47,6 +52,20 @@ fun BaseTextField(
         supportingText = { Text(errorText) }
     )
 }
+@Composable
+fun BaseNumberField(
+    value:String,
+    onValueChange: (String) -> Unit,
+    label: String,
+){
+    OutlinedTextField(
+        value = value,
+        onValueChange = {onValueChange(it)},
+        label = { Text(label) },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+    )
+}
+
 @Composable
 fun BasePasswordField(
     password:String,

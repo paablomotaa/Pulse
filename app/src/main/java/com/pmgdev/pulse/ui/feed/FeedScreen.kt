@@ -1,7 +1,7 @@
 package com.pmgdev.pulse.ui.feed
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.HorizontalDivider
@@ -24,18 +26,20 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.pmgdev.pulse.R
 import com.pmgdev.pulse.repository.model.Post
-import com.pmgdev.pulse.ui.base.BaseScaffold
-import com.pmgdev.pulse.ui.base.LoadingScreen
+import com.pmgdev.pulse.ui.base.composables.Action
+import com.pmgdev.pulse.ui.base.composables.BaseScaffold
+import com.pmgdev.pulse.ui.base.composables.BaseTextField
+import com.pmgdev.pulse.ui.base.components.LoadingScreen
+import com.pmgdev.pulse.ui.base.components.NoDataScreen
 import com.pmgdev.pulse.ui.theme.clairgreen
 import com.pmgdev.pulse.ui.theme.dark
 
@@ -45,26 +49,65 @@ fun FeedScreen(
     navController: NavController,
     viewModel: FeedScreenViewModel,
     goToImagePost: () -> Unit,
-    goToPostPreview:(String) -> Unit
+    goToPostPreview: (String) -> Unit,
+    goToListChats: () -> Unit,
+    goToProfile: (String) -> Unit,
 ){
+    LaunchedEffect(Unit) {
+        viewModel.getNotices()
+        viewModel.observePosts()
+    }
     BaseScaffold(
         title = "Feed",
         navController = navController,
         showActionButton = true,
-        floatingAction = goToImagePost
+        floatingAction = goToImagePost,
+        navIcon = null,
+        actions = listOf(
+            Action(
+                icon = Icons.Default.Refresh,
+                contentDescription = "",
+                onClick = {viewModel.getNotices()}
+            ),
+            Action(
+                icon = Icons.Default.MailOutline,
+                contentDescription = "",
+                onClick = {goToListChats()}
+            ),
+            Action(
+                icon = Icons.Default.Search,
+                contentDescription = "Buscar usuarios",
+                onClick = { viewModel.searchMode = !viewModel.searchMode }
+            )
+        ),
     ) { paddingValues ->
-        when (viewModel.state) {
-            is FeedScreenState.Loading -> LoadingScreen(paddingValues)
-            is FeedScreenState.Success -> FeedScreenContent(paddingValues, (viewModel.state as FeedScreenState.Success).post,goToPostPreview)
-            is FeedScreenState.NoData -> {
-                // NoDataScreen()
+
+        if(viewModel.searchMode) {
+            SearchScreen(viewModel,paddingValues,goToProfile)
+        }
+        else {
+            when (viewModel.state) {
+                is FeedScreenState.Loading -> LoadingScreen(paddingValues)
+                is FeedScreenState.Success -> FeedScreenContent(
+                    paddingValues,
+                    viewModel.posts,
+                    goToPostPreview,
+                )
+
+                is FeedScreenState.NoData -> {
+                    NoDataScreen(paddingValues)
+                }
             }
         }
     }
 }
 
 @Composable
-fun FeedScreenContent(paddingValues: PaddingValues, posts: List<Post>,goToPostPreview: (String) -> Unit) {
+fun FeedScreenContent(
+    paddingValues: PaddingValues,
+    posts: List<Post>,
+    goToPostPreview: (String) -> Unit,
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -91,7 +134,7 @@ fun FeedItem(post: Post,goToPostPreview: (String) -> Unit) {
             .fillMaxWidth(0.9f)
             .padding(8.dp),
         shape = MaterialTheme.shapes.medium,
-        colors = CardColors(containerColor = Color.DarkGray, contentColor = MaterialTheme.colorScheme.surface, disabledContainerColor = MaterialTheme.colorScheme.background, disabledContentColor = MaterialTheme.colorScheme.surface)
+        colors = CardColors(containerColor = dark, contentColor = MaterialTheme.colorScheme.surface, disabledContainerColor = MaterialTheme.colorScheme.background, disabledContentColor = MaterialTheme.colorScheme.surface)
     ){
         Column {
             AsyncImage(
@@ -123,5 +166,76 @@ fun FeedItem(post: Post,goToPostPreview: (String) -> Unit) {
             }
         }
     }
-
 }
+@Composable
+fun SearchScreen(
+    viewModel: FeedScreenViewModel,
+    paddingValues: PaddingValues,
+    goProfile: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .background(Brush.verticalGradient(listOf(clairgreen, dark)))
+    ) {
+        if (viewModel.searchMode) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                BaseTextField(
+                    value = viewModel.searchQuery,
+                    onValueChange = {
+                        viewModel.searchQuery = it
+                        viewModel.searchUsers(it)
+                    },
+                    label = "Buscar usuario...",
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .padding(vertical = 12.dp)
+                )
+            }
+
+            LazyColumn {
+                items(viewModel.searchResults) { user ->
+                    Column {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp, vertical = 6.dp),
+                            colors = CardColors(
+                                containerColor = Color.Black,
+                                contentColor = Color.White,
+                                disabledContainerColor = Color.DarkGray,
+                                disabledContentColor = Color.Gray
+                            ),
+                            shape = MaterialTheme.shapes.medium,
+                            onClick = { goProfile(user.uid) }
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp)
+                            ) {
+                                AsyncImage(
+                                    model = user.profileImage,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                )
+                                Spacer(modifier = Modifier.size(12.dp))
+                                Column {
+                                    Text(user.username, style = MaterialTheme.typography.titleMedium)
+                                    Text(user.email, style = MaterialTheme.typography.bodySmall)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

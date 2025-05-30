@@ -23,7 +23,7 @@ class PostRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firestorage: FirebaseStorage
 ) {
-    suspend fun addPost(uri: Uri,uiduser:String,username:String,description: String){
+    suspend fun addPost(uri: Uri, uiduser: String, username: String, description: String) {
         val uid = UUID.randomUUID()
         val filename = "post/${uid}.jpg"
         val ref = firestorage.reference.child(filename)
@@ -40,25 +40,63 @@ class PostRepository @Inject constructor(
         )
         val refpost = firestore.collection("posts").add(post).await()
 
-        refpost.update("uid",refpost.id)
-
+        refpost.update("uid", refpost.id)
     }
-    suspend fun getPost(uid:String):Post?{
+
+    suspend fun getPost(uid: String): Post? {
         val snapshot = firestore.collection("posts").document(uid).get().await()
 
-        if(snapshot.exists()){
+        if (snapshot.exists()) {
             val post = snapshot.toObject(Post::class.java)
-            if(post != null){
+            if (post != null) {
                 return post
+            } else {
+                Log.e("ERROR", "es null")
             }
-            else{
-                Log.e("ERROR","es null")
-            }
-        }
-        else{
+        } else {
             return null
         }
         return null
+    }
+
+    suspend fun getPosts(): List<Post> {
+        return try {
+            val snapshot = firestore.collection("posts")
+                .orderBy("date", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                .get()
+                .await()
+
+            snapshot.documents.mapNotNull { doc ->
+                doc.toObject(Post::class.java)
+            }
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error al obtener posts: $e")
+            emptyList()
+        }
+    }
+    suspend fun getPostsFromUser(userId:String):List<Post>{
+        return try {
+            val snapshot = firestore.collection("posts")
+                .whereEqualTo("uiduser",userId)
+                .orderBy("date").get().await()
+
+            return snapshot.toObjects(Post::class.java)
+        } catch (e: Exception){
+            Log.d("Firestore","Error al obtener posts: $e")
+            emptyList()
+        }
+    }
+
+    fun observePosts(onPostsChanged: (List<Post>) -> Unit) {
+        firestore.collection("posts")
+            .orderBy("date", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null || snapshot == null) return@addSnapshotListener
+
+                val posts = snapshot.documents.mapNotNull { it.toObject(Post::class.java) }
+                onPostsChanged(posts)
+                Log.d("Firestore", "SnapshotListener activado para posts")
+            }
     }
 
     //Escuchable para actualizar la lista de comentarios
@@ -73,7 +111,9 @@ class PostRepository @Inject constructor(
 
                 val comments = snapshot.documents.mapNotNull { it.toObject(Comment::class.java) }
                 onCommentsChanged(comments)
+                Log.d("Firestore", "SnapshotListener activado para $postId")
             }
+
     }
 
     suspend fun getComments(postId: String): List<Comment> {
@@ -86,18 +126,26 @@ class PostRepository @Inject constructor(
 
         return snapshot.documents.mapNotNull { it.toObject(Comment::class.java) }
     }
-    suspend fun addComments(postId:String,uidUser:String,username:String,content:String){
+
+    suspend fun addComments(postId: String, uidUser: String, username: String, content: String) {
         val comment = Comment(
             uidUser = uidUser,
             username = username,
             content = content
         )
 
-        firestore.collection("posts").document(postId).collection("comments").add(comment) //Añado una subcolección
+        firestore.collection("posts").document(postId).collection("comments")
+            .add(comment) //Añado una subcolección
             .addOnSuccessListener {
                 firestore.collection("posts")
                     .document(postId)
-                    .update("comments", FieldValue.increment(1)) //Para incrementar los comentarios que tiene el post
+                    .update(
+                        "comments",
+                        FieldValue.increment(1)
+                    ) //Para incrementar los comentarios que tiene el post
             }
+    }
+    suspend fun deletepost(uid:String){
+
     }
 }

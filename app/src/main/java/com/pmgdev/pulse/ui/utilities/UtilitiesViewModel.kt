@@ -16,7 +16,7 @@ import com.pmgdev.pulse.BuildConfig
  *
  * ViewModel de la pestaña Utilities
  *
- * Aquí irán todas las funcionalidades que se puedan.
+ * ViewModel para el cálculo de la dieta con Gemini.
  *
  * Actualización 2.0.0
  * Añadido Gemini 13.0.1
@@ -29,12 +29,13 @@ class UtilitiesViewModel @Inject constructor() : ViewModel() {
         private set
 
     //La APIKey la he quitado de aquí por seguridad y se queda guardada en local.properties
+    //Objeto cliente para conectar con el modelo de IA utilizando la APIKEY
     private val generativeModel = GenerativeModel(
         modelName = "gemini-1.5-flash",
         apiKey = BuildConfig.API_KEY
 
     )
-
+    //CONTROL DE CAMPOS
     fun onAlturaChange(altura: String) {
         uiState = uiState.copy(altura = altura)
     }

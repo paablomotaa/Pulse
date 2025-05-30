@@ -19,6 +19,9 @@ dagger = "2.52"
 retrofit = "2.9.0"
 gson = "2.10.1"
 okhttp-logging = "5.0.0-alpha.2"
+google-play-services = "21.1.0"
+google-auth = "21.0.0"
+firebase-messaging = "24.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -57,6 +60,7 @@ firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx",
 firebase-restore-ktx = {group = "com.google.firebase", name = "firebase-firestore-ktx",version.ref= "firebasestore"}
 firebase-appcheck-debug = "com.google.firebase:firebase-appcheck-debug:17.0.0"
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebase-storage" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebase-messaging" }
 
 #Hilt
 
@@ -70,6 +74,10 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version = "2.5.0" 
 
 #Gemini
 generative-ai-client = "com.google.ai.client.generativeai:generativeai:0.3.0"
+
+#google fits
+google-fit = { module = "com.google.android.gms:play-services-fitness", version.ref = "google-play-services" }
+google-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "google-auth" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

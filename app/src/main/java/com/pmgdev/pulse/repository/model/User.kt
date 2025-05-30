@@ -15,6 +15,7 @@ import java.util.Date
  */
 data class User(
     val uid: String = "",
+    val profileImage:String = "",
     val username: String = "",
     val email: String = "",
     val fullname: String = "",
@@ -25,5 +26,5 @@ data class User(
     val followers: Int = 0,
     val following: Int = 0
 ) {
-    constructor() : this("", "", "", "", "", 0, 0, Date(), 0, 0)
+    constructor() : this("","", "", "", "", "", 0, 0, Date(), 0, 0)
 }

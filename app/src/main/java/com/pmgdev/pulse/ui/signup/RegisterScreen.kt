@@ -1,6 +1,5 @@
 package com.pmgdev.pulse.ui.signup
 
-import DateField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +11,6 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -20,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.pmgdev.pulse.ui.base.BaseTextField
+import com.pmgdev.pulse.ui.base.composables.BaseTextField
 import com.pmgdev.pulse.ui.theme.dark
 import com.pmgdev.pulse.ui.theme.darkgreen
 import com.pmgdev.pulse.ui.theme.mediumgreen
@@ -53,6 +51,14 @@ fun RegisterScreen(goToLogin: () -> Unit,viewModel:RegisterViewModel) {
             onValueChange = {viewModel.onDateChange(it)},
             isError = viewModel.state.isDateError,
             errorText = viewModel.state.dateErrorText
+        )
+        Spacer(modifier = Modifier.size(25.dp))
+        BaseTextField(
+            value = viewModel.state.username,
+            onValueChange = {viewModel.onUsernameChange(it)},
+            label = "Username",
+            errorText = viewModel.state.usernameErrorText,
+            isError = viewModel.state.isUsernameError,
         )
         Spacer(modifier = Modifier.size(25.dp))
         BaseTextField(

@@ -10,13 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -25,9 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.pmgdev.pulse.ui.base.BaseButton
-import com.pmgdev.pulse.ui.base.BaseScaffold
-import com.pmgdev.pulse.ui.base.BaseTextField
+import com.pmgdev.pulse.ui.base.composables.BaseButton
+import com.pmgdev.pulse.ui.base.composables.BaseScaffold
+import com.pmgdev.pulse.ui.base.composables.BaseTextField
+import com.pmgdev.pulse.ui.base.baseicons.arrowBack
 import com.pmgdev.pulse.ui.theme.clairgreen
 import com.pmgdev.pulse.ui.theme.dark
 
@@ -37,15 +32,19 @@ fun ImagePostScreen(navController: NavController,viewModel: ImagePostViewModel,o
         title = "Nueva publicación",
         navController = navController,
         showBottomBar = false,
-        navIcon = Icons.Default.ArrowBack,
+        navIcon = arrowBack(),
         navIconAction = onBack
     ) { paddingValues ->
-        ImagePostContent(paddingValues, viewModel)
+        ImagePostContent(paddingValues, viewModel,onBack)
     }
 }
 
 @Composable
-fun ImagePostContent(paddingValues: PaddingValues, viewModel: ImagePostViewModel){
+fun ImagePostContent(
+    paddingValues: PaddingValues,
+    viewModel: ImagePostViewModel,
+    onBack: () -> Unit
+){
     Box(
         modifier = Modifier.fillMaxSize()
             .background(Brush.verticalGradient(colors = listOf(clairgreen, dark)))
@@ -70,7 +69,7 @@ fun ImagePostContent(paddingValues: PaddingValues, viewModel: ImagePostViewModel
                 isError = false
             )
             Spacer(modifier = Modifier.size(26.dp))
-            BaseButton(onClick = {viewModel.onPostClick()}, label = "Post")
+            BaseButton(onClick = {viewModel.onPostClick(onBack)}, label = "Post")
         }
     }
 }

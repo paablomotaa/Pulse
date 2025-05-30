@@ -10,8 +10,10 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.internal.Storage
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.pmgdev.pulse.repository.firebaserepository.PostRepository
 import com.pmgdev.pulse.repository.firebaserepository.UserRepository
 import com.pmgdev.pulse.repository.model.Post
+import com.pmgdev.pulse.repository.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -29,38 +31,49 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class FeedScreenViewModel @Inject constructor(
-    val fbStorage: FirebaseStorage,
     val firestore: FirebaseFirestore,
-    val userRepository: UserRepository
+    val postRepository: PostRepository
 ) : ViewModel() {
     var state by mutableStateOf<FeedScreenState>(FeedScreenState.Loading)
+    var posts by mutableStateOf<List<Post>>(emptyList())
+    private set
+    var searchMode by mutableStateOf(false)
+    var searchQuery by mutableStateOf("")
 
     fun getNotices() {
         viewModelScope.launch {
-            firestore.collection("posts")
-                .orderBy("date", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            val posts = postRepository.getPosts()
+
+            if (posts.isEmpty()) {
+                state = FeedScreenState.NoData
+                Log.e("ERROR", "NO CONSIGUE LOS DATOS post is empty")
+            } else {
+                state = FeedScreenState.Success(posts)
+                Log.e("SUCCESS", "CONSIGUE LOS DATOS")
+            }
+        }
+    }
+
+    fun observePosts(){
+        postRepository.observePosts { updatedPost ->
+            posts = updatedPost
+        }
+    }
+
+    var searchResults by mutableStateOf<List<User>>(emptyList())
+        private set
+
+    fun searchUsers(query: String) {
+        viewModelScope.launch {
+            firestore.collection("users")
                 .get()
                 .addOnSuccessListener { result ->
-                    val posts = result.documents.mapNotNull { doc ->
-                        doc.toObject(Post::class.java)
+                    val users = result.documents.mapNotNull { it.toObject(User::class.java) }
+                    searchResults = users.filter {
+                        it.username.contains(query, ignoreCase = true)
                     }
-
-                    if (posts.isEmpty()) {
-                        state = FeedScreenState.NoData
-                        Log.e("ERROR","NO CONSIGUE LOS DATOS post is empty")
-                    } else {
-                        state = FeedScreenState.Success(posts)
-                        Log.e("SUCCESS","CONSIGUE LOS DATOS")
-                    }
-                }
-                .addOnFailureListener {
-                    Log.e("ERROR","NO CONSIGUE LOS DATOS")
-                    state = FeedScreenState.NoData
                 }
         }
     }
 
-    init {
-        getNotices()
-    }
 }

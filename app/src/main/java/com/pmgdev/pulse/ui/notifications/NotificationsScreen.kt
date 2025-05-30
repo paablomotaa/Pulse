@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,10 +23,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.pmgdev.pulse.ui.base.BaseNavigationBar
-import com.pmgdev.pulse.ui.base.BaseScaffold
-import com.pmgdev.pulse.ui.base.BaseTopAppBar
+import com.pmgdev.pulse.ui.base.composables.BaseScaffold
 import com.pmgdev.pulse.ui.theme.clairgreen
 import com.pmgdev.pulse.ui.theme.dark
 
@@ -40,7 +36,7 @@ fun NotificationsScreen(navController: NavController){
     )
     BaseScaffold(
         title = "Notificaciones",
-        navController = navController
+        navController = navController,
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues = paddingValues).background(
             Brush.verticalGradient(colors = listOf(clairgreen, dark))),

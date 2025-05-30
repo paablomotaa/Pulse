@@ -24,19 +24,22 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.pmgdev.pulse.ui.base.BaseScaffold
-import com.pmgdev.pulse.ui.base.BaseTextField
+import com.pmgdev.pulse.ui.base.composables.BaseScaffold
+import com.pmgdev.pulse.ui.base.composables.BaseTextField
 import com.pmgdev.pulse.ui.theme.clairgreen
 import com.pmgdev.pulse.ui.theme.dark
 import com.pmgdev.pulse.ui.theme.mediumgreen
 
 @Composable
-fun UtilitiesScreen(viewModel: UtilitiesViewModel, navController: NavController) {
+fun UtilitiesScreen(
+    viewModel: UtilitiesViewModel,
+    navController: NavController,
+) {
     val state = viewModel.uiState
 
     BaseScaffold(
         title = "Utilidades",
-        navController = navController
+        navController = navController,
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -85,6 +88,7 @@ fun UtilitiesScreen(viewModel: UtilitiesViewModel, navController: NavController)
                 }
             }
             //Forma más interactiva de controlar los errores de campo vacío u otros errores.
+            //CAMBIAR A ESTADOS NORMALES PARA MEJOR FUNCIONALIDAD.
             state.errorMessage?.let { error ->
                 Text(
                     text = error,

@@ -19,7 +19,7 @@ android {
 
     defaultConfig {
         applicationId = "com.pmgdev.pulse"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -108,6 +108,7 @@ dependencies {
     implementation(libs.firebase.restore.ktx)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.appcheck.debug)
+    implementation(libs.firebase.messaging)
 
     //Coil
     implementation(libs.coil.compose)
@@ -119,6 +120,11 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.gson)
 
+
+    //IA
     implementation(libs.generative.ai.client)
+
+    implementation(libs.google.fit)
+    implementation(libs.google.auth)
 
 }

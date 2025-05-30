@@ -1,7 +1,5 @@
 
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -61,7 +59,6 @@ fun DateField(
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DialogDate(
     showDialog: Boolean,
@@ -79,8 +76,6 @@ fun DialogDate(
     }
 }
 
-
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerDialog(

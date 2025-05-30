@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
@@ -44,7 +45,41 @@ fun BasePickerImage(image: String?, onImageChange: (String) -> Unit) {
                 model = image,
                 contentDescription = "Imagen seleccionada",
                 modifier = Modifier
-                    .size(300.dp)
+                    .size(300.dp),
+                contentScale = ContentScale.Crop
+            )
+
+        } else {
+            Icon(
+                Icons.Default.Add,
+                contentDescription = "hola",
+            )
+        }
+    }
+}
+@Composable
+fun BasePickerImageProfile(image: String?, onImageChange: (String) -> Unit) {
+
+    val imagePickerLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            onImageChange(uri.toString())
+        }
+    Box(
+        modifier = Modifier
+            .size(100.dp)
+            .border(BorderStroke(1.dp, Color.Black), shape = CircleShape)
+            .background(Color.Gray, shape = CircleShape)
+            .clip(CircleShape)
+            .clickable { imagePickerLauncher.launch("image/*") },
+        contentAlignment = Alignment.Center
+    ) {
+        if (!image.isNullOrEmpty() && image.isNotBlank()) {
+            AsyncImage(
+                model = image,
+                contentDescription = "Imagen seleccionada",
+                modifier = Modifier
+                    .size(100.dp),
+                contentScale = ContentScale.Crop
             )
         } else {
             Icon(

@@ -123,18 +123,17 @@ class RegisterViewModel @Inject constructor(
         if(username.contains(' ')){
             return
         }
-
         if(username.isEmpty()){
             state = state.copy(
-                username = state.username,
-                isUsernameError = false,
+                username = username,
+                isUsernameError = true,
                 usernameErrorText = ""
             )
         }
         else{
             state = state.copy(
-                username = state.username,
-                isUsernameError = true,
+                username = username,
+                isUsernameError = false,
                 usernameErrorText = ""
             )
         }
@@ -143,36 +142,56 @@ class RegisterViewModel @Inject constructor(
         if (validateFields()){
             return
         }
+
         if(hasEmptyFields()){
             return
         }
-        else{
-            auth.createUserWithEmailAndPassword(state.email,state.password).addOnCompleteListener{ test ->
-                if(test.isSuccessful){
+        viewModelScope.launch {
+            val usernameexists = repository.checkusernameexists(state.username)
+            val emailexists = repository.checkemailexists(state.email)
+            if(usernameexists){
+                state = state.copy(
+                    isUsernameError = true,
+                    usernameErrorText = "Error, este usuario ya existe"
+                )
+                return@launch
+            }
+            if(emailexists){
+                state = state.copy(
+                    isEmailError = true,
+                    emailErrorText = "Error, este email ya existe"
+                )
+                return@launch
+            }
+            else{
+                auth.createUserWithEmailAndPassword(state.email,state.password).addOnCompleteListener{ test ->
+                    if(test.isSuccessful){
 
-                    val user = auth.currentUser
-                    val newUser = User(
-                        uid = user?.uid ?: "",
-                        username = "example",
-                        email = state.email,
-                        fullname = state.name,
-                        bio = "",
-                        peso = 0,
-                        altura = 0,
-                        created_at = Date(),
-                        followers = 0,
-                        following = 0,
-                    )
-                    viewModelScope.launch {
-                        repository.addUser(newUser)
+                        val user = auth.currentUser
+                        val newUser = User(
+                            uid = user?.uid ?: "",
+                            username = state.username,
+                            email = state.email,
+                            fullname = state.name,
+                            bio = "",
+                            peso = 0,
+                            altura = 0,
+                            created_at = Date(),
+                            followers = 0,
+                            following = 0,
+                        )
+                        viewModelScope.launch {
+                            repository.addUser(newUser)
+                        }
+                        goToLogin()
                     }
-                    goToLogin()
-                }
-                else{
-                    Log.d("FAILED","FAILED")
+                    else{
+                        Log.d("FAILED","FAILED")
+                    }
                 }
             }
         }
+
     }
 
     private fun hasEmptyFields():Boolean{

@@ -23,8 +23,7 @@ import javax.inject.Inject
  * ViewModel para ver el preview. Con el método uploadImage
  * Cargamos la imagen pasandole el UID por navegación por parámetros.
  *
- * Tenemos los demás métodos para los comentarios. El de observecomments es para que la
- * vista se pueda actualizar si hay algun cambio en la base de datos.
+ * Tenemos los demás métodos para los comentarios.
  *
  */
 @HiltViewModel
@@ -39,12 +38,27 @@ class PreviewPostViewModel @Inject constructor(
         private set
     var statecomment by mutableStateOf(PreviewPostCommentState())
         private set
+    var isCurrentUserPost by mutableStateOf(false)
+    private set
 
+    /**
+     *
+     * uploadImage
+     *
+     * Carga el post elegido por el usuario en un launchedEffect
+     *
+     */
     fun uploadImage(uid: String) {
         viewModelScope.launch {
             val post = postRepository.getPost(uid)
             Log.e("POST RECUPERADO", uid)
             if (post != null) {
+                if(post.uiduser == auth.currentUser?.uid){
+                    isCurrentUserPost = true
+                }
+                else{
+                    isCurrentUserPost = false
+                }
                 comments = postRepository.getComments(uid)
                 Log.d("Comentarios recuperados", comments.count().toString())
                 state = PreviewPostState.Success(post,comments)
@@ -55,10 +69,19 @@ class PreviewPostViewModel @Inject constructor(
             }
         }
     }
+
+    /**
+     *
+     * observeComments
+     *
+     * Para recibir los comentarios a tiempo real.
+     *
+     */
     fun observeComments(postId: String) {
-        postRepository.observeComments(postId) { updatedComments ->
-            comments = updatedComments
-        }
+            postRepository.observeComments(postId) { updatedComments ->
+                comments = updatedComments
+                Log.d("ViewModel", "Comentarios recibidos en tiempo real: ${updatedComments.size}")
+            }
     }
 
     fun onContentChange(comment: String) {

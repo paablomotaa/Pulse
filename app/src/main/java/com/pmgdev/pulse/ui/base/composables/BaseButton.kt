@@ -1,4 +1,4 @@
-package com.pmgdev.pulse.ui.base
+package com.pmgdev.pulse.ui.base.composables
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors

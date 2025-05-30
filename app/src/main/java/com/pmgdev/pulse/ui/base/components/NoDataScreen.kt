@@ -1,4 +1,4 @@
-package com.pmgdev.pulse.ui.base
+package com.pmgdev.pulse.ui.base.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -22,8 +22,8 @@ import com.pmgdev.pulse.ui.theme.clairgreen
 import com.pmgdev.pulse.ui.theme.dark
 
 @Composable
-fun LoadingScreen(paddingValues: PaddingValues) {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loadinglottie))
+fun NoDataScreen(paddingValues: PaddingValues){
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.nodatalottie))
     val progress by animateLottieCompositionAsState(
         composition,
         iterations = LottieConstants.IterateForever

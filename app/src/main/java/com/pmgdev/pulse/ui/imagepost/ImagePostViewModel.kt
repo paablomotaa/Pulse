@@ -1,13 +1,10 @@
 package com.pmgdev.pulse.ui.imagepost
 
-import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.google.firebase.storage.FirebaseStorage
-import java.util.UUID
 import javax.inject.Inject
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
@@ -58,17 +55,22 @@ class ImagePostViewModel @Inject constructor(
         )
     }
 
-    fun onPostClick(){
+    fun onPostClick(onBack: () -> Unit) {
         val uri = state.image.toUri()
-
-        viewModelScope.launch {
-            val user = userRepository.getUser(auth.currentUser?.uid.toString())
-            postRepository.addPost(
-                uri = uri,
-                uiduser = auth.currentUser?.uid ?: "null",
-                username = user?.username ?: "null",
-                description = state.description,
-            )
+        if(state.image.isEmpty()){
+            return
+        }
+        else{
+            viewModelScope.launch {
+                val user = userRepository.getUser(auth.currentUser?.uid.toString())
+                postRepository.addPost(
+                    uri = uri,
+                    uiduser = auth.currentUser?.uid ?: "null",
+                    username = user?.username ?: "null",
+                    description = state.description,
+                )
+                onBack()
+            }
         }
     }
 }
