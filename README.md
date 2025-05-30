@@ -4,9 +4,9 @@ Pulse es una aplicación móvil innovadora diseñada para ayudarte a llevar un e
 Ya sea que estés comenzando a hacer ejercicio o seas un atleta experimentado, Pulse es la herramienta perfecta para hacer seguimiento de tu rendimiento, establecer metas, 
 y unirte a una comunidad apasionada por el deporte.
 
-## 🟪 Versiones
+# 🟪 Versiones
 
-# 2.0.0 Beta
+## 2.0.0 Beta
 - Mejora del perfil y el feed 🆙
 
 ![image](https://github.com/user-attachments/assets/8ab71018-2c66-4429-b3ce-ab46e64d0813)
@@ -27,7 +27,7 @@ y unirte a una comunidad apasionada por el deporte.
 
 
 
-# 1.0.0 Beta
+## 1.0.0 Beta
 
 - Creación de interfaz básica para ir probando el funcionamiento del Login y el Register.
 
