@@ -6,6 +6,14 @@ y unirte a una comunidad apasionada por el deporte.
 
 # 🟪 Versiones
 
+## 3.0.0 Beta
+
+- Mejora del perfil y del feed
+
+- Integración del chat
+
+- Integración de Google fits
+
 ## 2.0.0 Beta
 - Mejora del perfil y el feed 🆙
 
