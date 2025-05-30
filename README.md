@@ -10,6 +10,7 @@ y unirte a una comunidad apasionada por el deporte.
 
 - Mejora del perfil y del feed
 
+Buscador de usuarios en el feed. Para cerrar volver a pulsar en la lupa.
 
 ![image](https://github.com/user-attachments/assets/816c07c0-231a-4bfd-9950-193de24d9906)
 
