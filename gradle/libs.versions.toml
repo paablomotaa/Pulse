@@ -22,6 +22,8 @@ okhttp-logging = "5.0.0-alpha.2"
 google-play-services = "21.1.0"
 google-auth = "21.0.0"
 firebase-messaging = "24.0.0"
+datastore = "1.0.0"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -78,6 +80,10 @@ generative-ai-client = "com.google.ai.client.generativeai:generativeai:0.3.0"
 #google fits
 google-fit = { module = "com.google.android.gms:play-services-fitness", version.ref = "google-play-services" }
 google-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "google-auth" }
+
+#DataStore
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

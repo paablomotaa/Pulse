@@ -1,5 +1,6 @@
 package com.pmgdev.pulse.ui.signup
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,10 +12,12 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,6 +28,15 @@ import com.pmgdev.pulse.ui.theme.mediumgreen
 
 @Composable
 fun RegisterScreen(goToLogin: () -> Unit,viewModel:RegisterViewModel) {
+    val context = LocalContext.current
+
+    //Para que salga un toast cada vez que haya algo mal.
+    LaunchedEffect(viewModel.state.toastMessage) {
+        viewModel.state.toastMessage?.let { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            viewModel.clearToastMessage()
+        }
+    }
 
     Column(
         modifier = Modifier.background(

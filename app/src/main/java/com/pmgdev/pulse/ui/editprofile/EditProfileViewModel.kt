@@ -114,11 +114,11 @@ class EditProfileViewModel @Inject constructor(
     }
     fun onEditClick(goBack: () -> Boolean){
         if(hasEmptyFields()){
-            Log.d("ERROR","CAMPO VACIO")
+            state = state.copy(toastMessage = "Hay campos vacíos❌")
             return
         }
         if (validateFields()){
-            Log.d("ERROR","CAMPO MAL VALIDADO")
+            state = state.copy(toastMessage = "Hay campos mal formados❌")
             return
         }
         viewModelScope.launch {
@@ -127,29 +127,27 @@ class EditProfileViewModel @Inject constructor(
             if(usernameexists && user?.username != state.username){
                 state = state.copy(
                     errorUsername = true,
-                    errorUsernameText = "Error, este usuario ya existe"
+                    errorUsernameText = "Error, este usuario ya existe",
                 )
-                Log.d("ERROR","YA EXISTE EL USUARIO")
                 return@launch
             }
             else{
                 val user = repository.getUser(auth.currentUser?.uid ?: "")
-                Log.d("USER", auth.currentUser?.uid ?: "NO UID")
                 if(user != null){
                     val updatedUser = user.copy(
                         username = state.username,
+                        fullname = state.fullname,
                         profileImage = state.image,
                         bio = state.bio,
                         altura = state.altura,
                         peso = state.peso
                     )
-                    Log.d("OK","OK")
                     repository.editUser(auth.currentUser?.uid ?: "",updatedUser)
-                    goBack() //lo pongo aqui porque si lo pongo en el otro lado no le da tiempo a acabar
+                    state = state.copy(toastMessage = "Edición correcta.✅")
+                    goBack()
                 }
                 else{
-                    Log.d("ERROR","ERRORRRR"
-                    )
+
                 }
             }
         }
@@ -170,5 +168,8 @@ class EditProfileViewModel @Inject constructor(
     }
     private fun validateFields():Boolean{
         return state.errorUsername || state.fullnameError || state.bioError
+    }
+    fun clearToastMessage() {
+        state = state.copy(toastMessage = null)
     }
 }

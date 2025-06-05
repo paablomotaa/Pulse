@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.pmgdev.pulse.repository.firebaserepository.PostRepository
 import com.pmgdev.pulse.repository.firebaserepository.UserRepository
@@ -119,6 +120,12 @@ class PreviewPostViewModel @Inject constructor(
                     error = true,
                 )
             }
+        }
+    }
+
+    fun deletePost(postId:String){
+        viewModelScope.launch {
+            postRepository.deletePost(postId)
         }
     }
 }

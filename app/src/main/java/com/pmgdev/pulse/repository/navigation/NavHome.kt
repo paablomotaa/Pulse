@@ -24,6 +24,8 @@ import com.pmgdev.pulse.ui.missions.DailyMissionsViewModel
 import com.pmgdev.pulse.ui.notifications.NotificationsScreen
 import com.pmgdev.pulse.ui.previewpost.PostDetailScreen
 import com.pmgdev.pulse.ui.previewpost.PreviewPostViewModel
+import com.pmgdev.pulse.ui.settings.SettingsScreen
+import com.pmgdev.pulse.ui.settings.SettingsViewModel
 import com.pmgdev.pulse.ui.userprofile.ProfileScreen
 import com.pmgdev.pulse.ui.userprofile.ProfileScreenViewModel
 import com.pmgdev.pulse.ui.utilities.UtilitiesScreen
@@ -48,6 +50,7 @@ object NavHome {
     fun listChats() = "$ROUTE/listchat"
     fun fitnessscreen() = "$ROUTE/fitness"
     fun missionsscreen(steps: Int, kcal: Float) = "$ROUTE/missions_screen/$steps/$kcal"
+    fun settingsscreen() = "$ROUTE/settings"
 
 
     fun NavGraphBuilder.navHome(
@@ -67,6 +70,7 @@ object NavHome {
             listChats(navController)
             fitnessScreen(navController)
             missionsScreen(navController)
+            settingScreen(navController)
         }
     }
 
@@ -116,6 +120,9 @@ object NavHome {
                 },
                 goToPostPreview = { postId ->
                     navController.navigate(postPreview(postId))
+                },
+                goToSettings = {
+                    navController.navigate(settingsscreen())
                 }
             )
         }
@@ -204,6 +211,20 @@ object NavHome {
                 navController,
                 steps = steps,
                 kcal = kcal
+            )
+        }
+    }
+    private fun NavGraphBuilder.settingScreen(navController: NavController){
+        composable(route = settingsscreen()){
+
+            val viewModel:SettingsViewModel = hiltViewModel()
+
+            SettingsScreen(
+                navController,
+                viewModel,
+                goToLogin = {navController.navigate(NavAccount.login()){
+                    popUpTo(0)
+                }}
             )
         }
     }

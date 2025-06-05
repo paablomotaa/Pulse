@@ -35,6 +35,7 @@ import com.google.firebase.initialize
 import com.google.firebase.storage.FirebaseStorage
 import com.pmgdev.pulse.ui.fitness.FitnessScreenViewModel
 import com.pmgdev.pulse.ui.home.HomeScreen
+import com.pmgdev.pulse.ui.settings.SettingsViewModel
 import java.util.Locale
 
 @AndroidEntryPoint
@@ -47,14 +48,13 @@ class MainActivity : ComponentActivity() {
         Firebase.appCheck.installAppCheckProviderFactory(
             DebugAppCheckProviderFactory.getInstance(),
         )
-
         setContent {
             PulseTheme {
                     HomeScreen()
             }
         }
     }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == FitnessScreenViewModel.GOOGLE_FIT_PERMISSIONS_REQUEST_CODE) {
@@ -65,5 +65,5 @@ class MainActivity : ComponentActivity() {
                     viewModel.requestCalories(context)
                 }
         }
-    }
+    }*/
 }

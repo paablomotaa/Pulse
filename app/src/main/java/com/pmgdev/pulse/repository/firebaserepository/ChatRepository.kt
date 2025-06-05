@@ -6,6 +6,7 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.pmgdev.pulse.repository.model.Chat
 import com.pmgdev.pulse.repository.model.ChatPreview
+import com.pmgdev.pulse.repository.model.Fine
 import com.pmgdev.pulse.repository.model.Message
 import com.pmgdev.pulse.repository.model.User
 import kotlinx.coroutines.tasks.await
@@ -160,5 +161,13 @@ class ChatRepository @Inject constructor(
                 val messages = snapshot?.documents?.mapNotNull { it.toObject(Message::class.java) } ?: emptyList()
                 onChange(messages)
             }
+    }
+    fun createFine(fine: Fine): Result<Unit>{
+        return try {
+            val fineRef = firestore.collection("fines").add(fine)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

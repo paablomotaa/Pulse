@@ -145,7 +145,47 @@ class PostRepository @Inject constructor(
                     ) //Para incrementar los comentarios que tiene el post
             }
     }
-    suspend fun deletepost(uid:String){
+    suspend fun deletePost(postId:String){
+        firestore.collection("posts").document(postId).delete()
+    }
+    fun likePost(postId: String, userId: String, onResult: (Boolean) -> Unit) {
+        val likeRef = firestore.collection("posts")
+            .document(postId)
+            .collection("likes")
+            .document(userId)
 
+        likeRef.set(mapOf("timestamp" to System.currentTimeMillis()))
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    fun unlikePost(postId: String, userId: String, onResult: (Boolean) -> Unit) {
+        val likeRef = firestore.collection("posts")
+            .document(postId)
+            .collection("likes")
+            .document(userId)
+
+        likeRef.delete()
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    fun isPostLikedByUser(postId: String, userId: String, onResult: (Boolean) -> Unit) {
+        firestore.collection("posts")
+            .document(postId)
+            .collection("likes")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { onResult(it.exists()) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    fun countLikes(postId: String, onResult: (Int) -> Unit) {
+        firestore.collection("posts")
+            .document(postId)
+            .collection("likes")
+            .get()
+            .addOnSuccessListener { onResult(it.size()) }
+            .addOnFailureListener { onResult(0) }
     }
 }

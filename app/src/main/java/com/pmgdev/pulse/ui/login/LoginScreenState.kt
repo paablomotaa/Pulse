@@ -12,6 +12,7 @@ data class LoginScreenState(
 
     val emailErrorText:String = "",
     val passwordErrorText:String = "",
+    val toastMessage:String? = null,
 
     val success:Boolean = false,
     val emptyFields:Boolean = false,

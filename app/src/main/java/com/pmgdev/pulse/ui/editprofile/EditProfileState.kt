@@ -16,5 +16,6 @@ data class EditProfileState(
     val errorUsernameText:String = "",
     val errorImageText:String = "",
     val errorBioText:String = "",
-    val errorFullnameText:String = ""
+    val errorFullnameText:String = "",
+    val toastMessage:String? = null
 )

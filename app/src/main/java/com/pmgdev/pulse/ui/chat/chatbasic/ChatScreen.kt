@@ -36,8 +36,8 @@ import com.pmgdev.pulse.ui.theme.clairgreen
 import com.pmgdev.pulse.ui.theme.dark
 
 
-//CAMBIAR EL TEXTO DE ARRIBA POR EL NOMBRE DEL USUARIO
 
+// Poner nombre en el appbar de la persona y el toast cuando se cree una Fine.
 /**
  *
  * Interfaz del chat
@@ -66,7 +66,7 @@ fun ChatScreen(
             Action(
                 icon = Icons.Default.Warning,
                 contentDescription = "",
-                onClick = {}
+                onClick = {viewModel.createFine(chatId)}
             )
         ),
         navIcon = arrowBack(),

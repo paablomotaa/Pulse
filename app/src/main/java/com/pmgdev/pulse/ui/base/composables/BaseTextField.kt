@@ -63,6 +63,17 @@ fun BaseNumberField(
         onValueChange = {onValueChange(it)},
         label = { Text(label) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = darkgray,
+            unfocusedContainerColor = dark,
+            focusedLabelColor = clairgreen,
+            unfocusedLabelColor = darkgray,
+            focusedIndicatorColor = clairgreen,
+            unfocusedIndicatorColor = darkgray,
+            cursorColor = clairgreen,
+            focusedTextColor = clairgreen,
+            unfocusedTextColor = clairgreen
+        ),
     )
 }
 

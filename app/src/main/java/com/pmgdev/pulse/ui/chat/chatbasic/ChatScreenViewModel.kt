@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
 import com.pmgdev.pulse.repository.firebaserepository.ChatRepository
+import com.pmgdev.pulse.repository.model.Fine
 import com.pmgdev.pulse.repository.model.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -36,7 +37,15 @@ class ChatScreenViewModel @Inject constructor(
         text = txt
     }
 
-
+    /**
+     *
+     * observeMessages
+     *
+     * Metodo para actualizar los mensajes en tiempo real.
+     *
+     * @param chatId
+     *
+     */
     fun observeMessages(chatId: String) {
         messageListener?.remove()
 
@@ -51,6 +60,15 @@ class ChatScreenViewModel @Inject constructor(
         )
     }
 
+    /**
+     *
+     * loadMessages
+     *
+     * Metodo para cargar los mensajes del chat
+     *
+     * @param chatId
+     *
+     */
     fun loadMessages(chatId: String) {
 
         viewModelScope.launch {
@@ -65,7 +83,15 @@ class ChatScreenViewModel @Inject constructor(
             )
         }
     }
-
+    /**
+     *
+     * sendMessage
+     *
+     * Metodo para enviar el mensaje.
+     *
+     * @param chatId
+     *
+     */
     fun sendMessage(chatId: String) {
         val message = Message(
             id = "",
@@ -78,7 +104,20 @@ class ChatScreenViewModel @Inject constructor(
             chatId = chatId,
             message = message,
         )
+        text = ""
     }
+
+    /**
+     *
+     * messageIsFrom
+     *
+     * Metodo para que la interfaz sepa de quien es el mensaje
+     * y lo cambie de lado y de color.
+     *
+     * @param senderId
+     *
+     */
+
     fun messageIsFrom(senderId:String):Boolean{
         val currentUid = auth.currentUser?.uid
         if(currentUid != senderId){
@@ -87,5 +126,19 @@ class ChatScreenViewModel @Inject constructor(
         else{
             return true
         }
+    }
+    /**
+     *
+     * createFine
+     *
+     * Para crear un reporte de un chat.
+     *
+     */
+
+    fun createFine(chatId:String){
+        Fine(
+            userId = auth.currentUser?.uid ?: "",
+            chatId = chatId
+        )
     }
 }

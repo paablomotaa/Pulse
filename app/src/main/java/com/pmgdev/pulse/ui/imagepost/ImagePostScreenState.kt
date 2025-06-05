@@ -7,6 +7,7 @@ data class ImagePostScreenState(
     val isErrorImage: Boolean = false,
 
     val errorTextImage:String = "",
+    val toastMessage:String? = null,
 
     val globalError:Boolean = false,
     val isLoading: Boolean = false,

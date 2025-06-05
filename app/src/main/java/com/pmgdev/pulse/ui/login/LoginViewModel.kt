@@ -5,9 +5,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.pmgdev.pulse.network.Session
+import com.pmgdev.pulse.network.Session.Companion.email
 import com.pmgdev.pulse.utils.isValidEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -19,7 +23,10 @@ import javax.inject.Inject
  */
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val auth: FirebaseAuth) : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val auth: FirebaseAuth,
+    private val session: Session
+) : ViewModel() {
     var state by mutableStateOf(LoginScreenState())
         private set
 
@@ -69,19 +76,29 @@ class LoginViewModel @Inject constructor(private val auth: FirebaseAuth) : ViewM
 
     fun onLoginClick(goToHome: () -> Unit) {
         if (validateFields()){
+            state = state.copy(
+                toastMessage = "Hay campos incorrectos❌"
+            )
             return
         }
         if(hasEmptyFields()){
+            state = state.copy(toastMessage = "Hay campos vacíos❌")
             return
         }
-        Log.d("LOGIN","ENTRO AL LOGIN")
         auth.signInWithEmailAndPassword(state.email.trim(),state.password.trim()).addOnCompleteListener{ test ->
             if(test.isSuccessful){
-                Log.d("LOGIN","LOGIN CORRECTO")
+                state = state.copy(toastMessage = "Login correcto✅")
+                viewModelScope.launch {
+                    session.saveUserSession(
+                        userEmail = state.email,
+                        userPassword = state.password,
+                        isUserLoggedIn = true
+                    )
+                }
                 goToHome()
             }
             else{
-                Log.e("ERROR","Error ${test.exception?.message}")
+                state = state.copy(toastMessage = "Hubo un error desconocido. Por favor pruebe más tarde.❌")
             }
         }
         Log.d("log", "User logged: " + auth.currentUser?.email.toString())
@@ -111,5 +128,10 @@ class LoginViewModel @Inject constructor(private val auth: FirebaseAuth) : ViewM
 
     private fun validateFields():Boolean{
         return state.isEmailError || state.isPasswordError
+    }
+    fun clearToastMessage(){
+        state = state.copy(
+            toastMessage = ""
+        )
     }
 }

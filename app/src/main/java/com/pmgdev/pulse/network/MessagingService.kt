@@ -27,36 +27,4 @@ class MessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
     }
-
-    override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        super.onMessageReceived(remoteMessage)
-        Log.d("FCM", "Message received: ${remoteMessage.notification?.body}")
-        remoteMessage.notification?.let {
-            showNotification(it.title ?: "Pulse", it.body ?: "")
-        }
-    }
-
-    private fun showNotification(title: String, message: String) {
-        val channelId = "pulse_channel_id"
-        val notificationManager =
-            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "Pulse Notifications",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
-
-        val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setAutoCancel(true)
-            .build()
-
-        notificationManager.notify(0, notification)
-    }
 }

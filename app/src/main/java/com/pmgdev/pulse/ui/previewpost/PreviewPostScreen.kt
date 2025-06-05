@@ -166,6 +166,7 @@ fun PostDetailContent(
                             }
                         }
                         Spacer(Modifier.size(16.dp))
+                        if(!viewModel.isCurrentUserPost){
                         if(viewModel.statecomment.sended){
                             Text("Comentario enviado", color = Color.LightGray)
                         }
@@ -179,7 +180,7 @@ fun PostDetailContent(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Row {
-                                if(!viewModel.isCurrentUserPost){
+
                                     BaseButton(
                                         onClick = {viewModel.postComment(post.uid)},
                                         label = "Enviar"
@@ -189,14 +190,15 @@ fun PostDetailContent(
                                         label = "Ver perfil"
                                     )
                                 }
-                                else{
-                                    BaseButton(
-                                        //Funcion para eliminar
-                                        onClick = {},
-                                        label = "Eliminar"
-                                    )
-                                }
                             }
+
+                        }
+                        else{
+                            BaseButton(
+                                //Funcion para eliminar
+                                onClick = {},
+                                label = "Eliminar"
+                            )
                         }
                     }
                 }

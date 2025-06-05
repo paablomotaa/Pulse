@@ -1,5 +1,6 @@
 package com.pmgdev.pulse.repository.firebaserepository
 
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -54,38 +55,25 @@ class UserRepository @Inject constructor(
             return null
         }
     }
-    suspend fun editUser(uid: String, user: User) {
-        try {
-            Log.d("EDIT_USER", "Inicio de edición para uid: $uid")
-            Log.d("EDIT_USER", "URI de imagen recibida: ${user.profileImage}")
-
-            val uidfirestorage = UUID.randomUUID()
-            val filename = "imageperf/$uidfirestorage.jpg"
-            val ref = firebaseStorage.reference.child(filename)
-
-            // Subir imagen
-            Log.d("EDIT_USER", "Subiendo imagen a: $filename")
-            val uploadTask = ref.putFile(user.profileImage.toUri()).await()
-            Log.d("EDIT_USER", "Imagen subida con éxito")
-
-            // Obtener URL
-            val url = ref.downloadUrl.await()
-            Log.d("EDIT_USER", "URL de descarga obtenida: $url")
-
-            // Crear copia del usuario con la nueva imagen
-            val updatedUser = user.copy(profileImage = url.toString())
-            Log.d("EDIT_USER", "Usuario actualizado: $updatedUser")
-
-            // Guardar en Firestore
-            firestore.collection("users").document(uid)
-                .set(updatedUser, SetOptions.merge())
-                .await()
-            Log.d("EDIT_USER", "Usuario guardado correctamente en Firestore")
-
-        } catch (e: Exception) {
-            Log.e("EDIT_USER", "Error al editar usuario: ${e.message}", e)
+    fun editUser(userId: String, user: User) {
+        if (user.profileImage.startsWith("content://") || user.profileImage.startsWith("file://")) {
+            val imageUri = user.profileImage.toUri()
+            val ref = firebaseStorage.reference.child("imageperf/${UUID.randomUUID()}.jpg")
+            ref.putFile(imageUri)
+                .addOnSuccessListener {
+                    ref.downloadUrl.addOnSuccessListener { downloadUrl ->
+                        val updatedUser = user.copy(profileImage = downloadUrl.toString())
+                        firestore.collection("users").document(userId).set(updatedUser)
+                    }
+                }
+                .addOnFailureListener {
+                    Log.e("EDIT_USER", "Error al subir la imagen", it)
+                }
+        } else {
+            firestore.collection("users").document(userId).set(user)
         }
     }
+
 
     suspend fun checkemailexists(email:String): Boolean{
         val email = firestore.collection("users").whereEqualTo("email",email).get().await()
@@ -147,5 +135,62 @@ class UserRepository @Inject constructor(
 
         followingRef.delete().await()
         followerRef.delete().await()
+    }
+
+    suspend fun changeEmail(newEmail: String): Result<Boolean> {
+        return try {
+            val user = auth.currentUser ?: return Result.failure(Exception("Usuario no autenticado"))
+
+            user.updateEmail(newEmail).await()
+
+            firestore.collection("users")
+                .document(user.uid)
+                .update("email", newEmail)
+                .await()
+
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    suspend fun changePassword(newPassword: String): Result<Boolean> {
+        return try {
+            val user =
+                auth.currentUser ?: return Result.failure(Exception("Usuario no autenticado"))
+
+            user.updatePassword(newPassword).await()
+
+            Result.success(true)
+        } catch (e:Exception){
+            Result.failure(e)
+        }
+    }
+    suspend fun deleteAccount(): Result<Boolean>{
+        return try{
+            val user = auth.currentUser ?: return Result.failure(Exception("Usuario no autenticado"))
+
+            //Borro publicaciones
+            val posts = firestore.collection("posts")
+                .whereEqualTo("userId", user.uid)
+                .get()
+                .await()
+
+            for (document in posts.documents) {
+                firestore.collection("posts").document(document.id).delete().await()
+            }
+
+            //Borro al usuario de firestore
+
+            firestore.collection("users")
+                .document(user.uid)
+                .delete()
+                .await()
+
+            //Borro al usuario de auth
+            user.delete()
+            Result.success(true)
+        } catch (e: Exception){
+            Result.failure(e)
+        }
     }
 }

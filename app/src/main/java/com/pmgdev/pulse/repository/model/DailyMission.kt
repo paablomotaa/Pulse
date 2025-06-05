@@ -1,5 +1,13 @@
 package com.pmgdev.pulse.repository.model
 
+
+/**
+ *
+ * Clase DailyMission
+ *
+ * Representa cada una de las misiones diarias que se irán añadiendo
+ *
+ */
 data class DailyMission(
     val id: String,
     val title: String,

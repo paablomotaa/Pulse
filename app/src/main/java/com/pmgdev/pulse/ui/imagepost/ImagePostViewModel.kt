@@ -58,6 +58,7 @@ class ImagePostViewModel @Inject constructor(
     fun onPostClick(onBack: () -> Unit) {
         val uri = state.image.toUri()
         if(state.image.isEmpty()){
+            state = state.copy(toastMessage = "La imagen no puede estar vacía❌")
             return
         }
         else{
@@ -69,8 +70,12 @@ class ImagePostViewModel @Inject constructor(
                     username = user?.username ?: "null",
                     description = state.description,
                 )
+                state = state.copy(toastMessage = "Publicación subida✅")
                 onBack()
             }
         }
+    }
+    fun clearToastMessage(){
+        state = state.copy(toastMessage = null)
     }
 }

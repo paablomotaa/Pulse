@@ -124,7 +124,10 @@ dependencies {
     //IA
     implementation(libs.generative.ai.client)
 
+    //Google Fits
     implementation(libs.google.fit)
     implementation(libs.google.auth)
 
+    //DataStore
+    implementation(libs.datastore.preferences)
 }

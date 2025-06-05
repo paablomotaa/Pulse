@@ -4,8 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,7 +55,10 @@ import com.pmgdev.pulse.ui.theme.dark
 import com.pmgdev.pulse.ui.theme.mediumgreen
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.filled.Settings
+import com.pmgdev.pulse.ui.base.baseicons.arrowBack
+import com.pmgdev.pulse.ui.base.components.NoDataScreen
+import com.pmgdev.pulse.ui.base.composables.Action
 
 
 /**
@@ -76,7 +77,8 @@ fun ProfileScreen(
     uidUser: String,
     goToEditProfile: () -> Unit,
     goToChat: (String) -> Unit,
-    goToPostPreview: (String) -> Unit
+    goToPostPreview: (String) -> Unit,
+    goToSettings: () -> Unit
 ){
     LaunchedEffect(uidUser) {
         viewModel.getProfileData(uidUser)
@@ -85,8 +87,15 @@ fun ProfileScreen(
     BaseScaffold(
         title = "Perfil de usuario",
         navController = navController,
-        navIcon = if(!viewModel.isCurrentUser) Icons.Default.ArrowBack else null,
-        navIconAction = {navController.popBackStack()}
+        navIcon = if(!viewModel.isCurrentUser) arrowBack() else null,
+        navIconAction = {navController.popBackStack()},
+        actions = listOf(
+            Action(
+                icon = Icons.Default.Settings,
+                contentDescription = "",
+                onClick = {goToSettings()}
+            )
+        )
     ) { paddingValues ->
         when (viewModel.state) {
             ProfileScreenState.Loading -> {
@@ -94,7 +103,7 @@ fun ProfileScreen(
             }
 
             ProfileScreenState.NoData -> {
-                //NODATA
+                NoDataScreen(paddingValues)
             }
 
             is ProfileScreenState.Success -> {

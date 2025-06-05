@@ -92,6 +92,7 @@ fun FeedScreen(
                     paddingValues,
                     viewModel.posts,
                     goToPostPreview,
+                    viewModel = viewModel,
                 )
 
                 is FeedScreenState.NoData -> {
@@ -107,6 +108,7 @@ fun FeedScreenContent(
     paddingValues: PaddingValues,
     posts: List<Post>,
     goToPostPreview: (String) -> Unit,
+    viewModel: FeedScreenViewModel
 ) {
     Box(
         modifier = Modifier
@@ -118,14 +120,14 @@ fun FeedScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(posts) { post ->
-                FeedItem(post,goToPostPreview)
+                FeedItem(post,goToPostPreview,viewModel)
             }
         }
     }
 }
 
 @Composable
-fun FeedItem(post: Post,goToPostPreview: (String) -> Unit) {
+fun FeedItem(post: Post,goToPostPreview: (String) -> Unit,viewModel: FeedScreenViewModel) {
     Card(
         onClick = {
             goToPostPreview(post.uid)
@@ -151,8 +153,8 @@ fun FeedItem(post: Post,goToPostPreview: (String) -> Unit) {
                 Spacer(modifier = Modifier.size(10.dp))
                 Text("Subido por " + post.username)
                 Spacer(modifier = Modifier.size(30.dp))
-                IconButton(onClick = {}) {
-                    Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "")
+                IconButton(onClick = { viewModel.toggleLike(post.uid) }) {
+                    Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "Like")
                 }
                 IconButton(onClick = {}) {
                     Icon(imageVector = Icons.Default.MailOutline, contentDescription = "")

@@ -140,10 +140,12 @@ class RegisterViewModel @Inject constructor(
     }
     fun onRegisterClick(goToLogin: () -> Unit) {
         if (validateFields()){
+            state = state.copy(toastMessage = "Hay campos incorrectos❌")
             return
         }
 
         if(hasEmptyFields()){
+            state = state.copy(toastMessage = "Hay campos vacíos❌")
             return
         }
         viewModelScope.launch {
@@ -183,6 +185,7 @@ class RegisterViewModel @Inject constructor(
                         viewModelScope.launch {
                             repository.addUser(newUser)
                         }
+                        state = state.copy(toastMessage = "Registro correcto✅")
                         goToLogin()
                     }
                     else{
@@ -221,7 +224,7 @@ class RegisterViewModel @Inject constructor(
         if(state.password.isEmpty()){
             state = state.copy(
                 isPasswordError = true,
-                passwordErrorText = "Este campo no puede estar vacío"
+                passwordErrorText = "Este campo no puede estar vacío",
             )
 
             hasEmptyFields = true
@@ -232,6 +235,9 @@ class RegisterViewModel @Inject constructor(
 
     private fun validateFields():Boolean{
         return state.isNameError || state.isEmailError || state.isDateError || state.isPasswordError
+    }
+    fun clearToastMessage() {
+        state = state.copy(toastMessage = null)
     }
 
 }
