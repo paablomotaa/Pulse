@@ -148,44 +148,37 @@ class PostRepository @Inject constructor(
     suspend fun deletePost(postId:String){
         firestore.collection("posts").document(postId).delete()
     }
-    fun likePost(postId: String, userId: String, onResult: (Boolean) -> Unit) {
+    suspend fun likePost(postId: String, userId: String) {
+
         val likeRef = firestore.collection("posts")
             .document(postId)
             .collection("likes")
             .document(userId)
 
-        likeRef.set(mapOf("timestamp" to System.currentTimeMillis()))
-            .addOnSuccessListener { onResult(true) }
-            .addOnFailureListener { onResult(false) }
+        firestore.collection("posts").document(postId).update("likes", FieldValue.increment(1))
+
+        likeRef.set(emptyMap<String, Any>()) //Para que no añada ningun campo ya que el userUID lo estamos guardando en el nombre.
     }
 
-    fun unlikePost(postId: String, userId: String, onResult: (Boolean) -> Unit) {
+    suspend fun unlikePost(postId: String, userId: String) {
         val likeRef = firestore.collection("posts")
             .document(postId)
             .collection("likes")
             .document(userId)
 
-        likeRef.delete()
-            .addOnSuccessListener { onResult(true) }
-            .addOnFailureListener { onResult(false) }
+        firestore.collection("posts").document(postId).update("likes", FieldValue.increment(-1))
+
+        likeRef.delete().await()
     }
 
-    fun isPostLikedByUser(postId: String, userId: String, onResult: (Boolean) -> Unit) {
-        firestore.collection("posts")
+    suspend fun isPostLikedByUser(postId: String, userId: String) : Boolean {
+        val snapshot = firestore.collection("posts")
             .document(postId)
             .collection("likes")
             .document(userId)
             .get()
-            .addOnSuccessListener { onResult(it.exists()) }
-            .addOnFailureListener { onResult(false) }
-    }
+            .await()
 
-    fun countLikes(postId: String, onResult: (Int) -> Unit) {
-        firestore.collection("posts")
-            .document(postId)
-            .collection("likes")
-            .get()
-            .addOnSuccessListener { onResult(it.size()) }
-            .addOnFailureListener { onResult(0) }
+        return snapshot.exists()
     }
 }

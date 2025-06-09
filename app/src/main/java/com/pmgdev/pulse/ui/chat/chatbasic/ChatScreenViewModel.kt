@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
 import com.pmgdev.pulse.repository.firebaserepository.ChatRepository
@@ -97,7 +98,7 @@ class ChatScreenViewModel @Inject constructor(
             id = "",
             senderId = auth.currentUser?.uid ?: "",
             text = text,
-            timestamp = System.currentTimeMillis()
+            timestamp = Timestamp.now()
         )
 
         repository.sendMessage(

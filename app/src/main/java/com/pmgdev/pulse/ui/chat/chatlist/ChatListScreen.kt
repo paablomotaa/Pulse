@@ -37,6 +37,8 @@ import com.pmgdev.pulse.ui.base.baseicons.arrowBack
 import com.pmgdev.pulse.ui.base.composables.BaseScaffold
 import com.pmgdev.pulse.ui.theme.clairgreen
 import com.pmgdev.pulse.ui.theme.dark
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 @Composable
@@ -124,7 +126,7 @@ fun ChatPreviewItem(chat: ChatPreview, onClick: (String) -> Unit) {
             }
 
             Text(
-                text = chat.timestamp,
+                text = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(chat.timestamp.toDate()),
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.White
             )

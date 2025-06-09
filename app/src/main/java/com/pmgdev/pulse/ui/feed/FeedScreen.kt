@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Refresh
@@ -27,6 +28,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -128,6 +133,12 @@ fun FeedScreenContent(
 
 @Composable
 fun FeedItem(post: Post,goToPostPreview: (String) -> Unit,viewModel: FeedScreenViewModel) {
+    var isLiked by remember { mutableStateOf(false) }
+
+    LaunchedEffect(post.uid) {
+        val liked = viewModel.isPostLikedByUserSuspend(post.uid)
+        isLiked = liked
+    }
     Card(
         onClick = {
             goToPostPreview(post.uid)
@@ -153,10 +164,19 @@ fun FeedItem(post: Post,goToPostPreview: (String) -> Unit,viewModel: FeedScreenV
                 Spacer(modifier = Modifier.size(10.dp))
                 Text("Subido por " + post.username)
                 Spacer(modifier = Modifier.size(30.dp))
-                IconButton(onClick = { viewModel.toggleLike(post.uid) }) {
-                    Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "Like")
+
+                IconButton(onClick = {
+                    viewModel.toggleLike(post.uid)
+                    isLiked = !isLiked
+                }) {
+                    if(isLiked){
+                        Icon(imageVector = Icons.Filled.Favorite, contentDescription = "Like", tint = Color.Red)
+                    }
+                    else{
+                        Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "Like")
+                    }
                 }
-                IconButton(onClick = {}) {
+                IconButton(onClick = {goToPostPreview(post.uid)}) {
                     Icon(imageVector = Icons.Default.MailOutline, contentDescription = "")
                 }
             }

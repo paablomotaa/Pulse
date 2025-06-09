@@ -1,5 +1,6 @@
 package com.pmgdev.pulse.ui.chat.chatbasic
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -78,8 +79,14 @@ fun ChatScreen(
                 reverseLayout = true
             ) {
                 items(messages.reversed()) { message ->
-                    BaseMessageBubble(message = message,viewModel.messageIsFrom(message.senderId))
-                    Spacer(modifier = Modifier.height(4.dp))
+                    if(message.text.isNullOrBlank()){
+                        Log.d("Chat"," no se envía mensaje")
+                    }
+                    else{
+                        BaseMessageBubble(message = message,viewModel.messageIsFrom(message.senderId))
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
+
                 }
             }
 

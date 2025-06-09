@@ -7,6 +7,7 @@
     import androidx.compose.runtime.setValue
     import androidx.lifecycle.ViewModel
     import androidx.lifecycle.viewModelScope
+    import com.google.firebase.Timestamp
     import com.google.firebase.auth.FirebaseAuth
     import com.google.firebase.firestore.FirebaseFirestore
     import com.pmgdev.pulse.repository.firebaserepository.ChatRepository
@@ -80,8 +81,6 @@
                     .await()
                 isFollowing = doc.exists()
             }
-
-
         }
 
         /**
@@ -111,6 +110,8 @@
                     )
                     isFollowing = true
                 }
+                val updatedUser = repository.getUser(targetUid)
+                state = ProfileScreenState.Success(updatedUser)
             }
         }
 
@@ -130,13 +131,10 @@
                     userId1 = auth.currentUser?.uid ?: "",
                     userId2 = userId,
                     firstMessage = Message(
-                        text = "¡Hola!",
+                        text = "",
                         senderId = auth.currentUser?.uid ?: "",
-                        timestamp = System.currentTimeMillis(),
+                        timestamp = Timestamp.now(),
                     ),
-                    onFailure = {
-                        Log.d("ERROR","ERROR")
-                    },
                     onComplete = { chatId ->
                         Log.d("Navegando al chat",chatId)
                         goChat(chatId)

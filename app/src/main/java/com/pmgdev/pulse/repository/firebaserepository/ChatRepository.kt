@@ -16,7 +16,7 @@ import javax.inject.Inject
  *
  * ChatRepository
  *
- * Sentenias para el acceso a la base de datos del chat.
+ * Sentencias para el acceso a la base de datos del chat.
  *
  */
 class ChatRepository @Inject constructor(
@@ -28,7 +28,6 @@ class ChatRepository @Inject constructor(
         userId2: String,
         firstMessage: Message,
         onComplete: (String) -> Unit, //Para pasar mejor el resultado una vez se complete.
-        onFailure: (Exception) -> Unit
     ) {
         val db = FirebaseFirestore.getInstance()
         val chatsRef = db.collection("chats")
@@ -47,7 +46,7 @@ class ChatRepository @Inject constructor(
                     val chat = Chat(
                         id = newChatRef.id,
                         participants = listOf(userId1, userId2),
-                        lastMessage = firstMessage.text,
+                        lastMessage = "",
                         lastMessageTimestamp = firstMessage.timestamp
                     )
                     val newMessageRef = newChatRef.collection("messages").document()
@@ -94,7 +93,7 @@ class ChatRepository @Inject constructor(
                             otherUserName = user.fullname,
                             otherUserImageUrl = user.profileImage,
                             lastMessage = chat.lastMessage,
-                            timestamp = chat.lastMessageTimestamp.toString()
+                            timestamp = chat.lastMessageTimestamp
                         )
                     )
                 }

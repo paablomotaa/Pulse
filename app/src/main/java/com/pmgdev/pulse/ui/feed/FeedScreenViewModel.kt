@@ -13,6 +13,7 @@ import com.pmgdev.pulse.repository.model.Post
 import com.pmgdev.pulse.repository.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 import javax.inject.Inject
 
 
@@ -33,13 +34,11 @@ class FeedScreenViewModel @Inject constructor(
     var state by mutableStateOf<FeedScreenState>(FeedScreenState.Loading)
 
     var posts by mutableStateOf<List<Post>>(emptyList())
-    private set
+        private set
+
 
     var searchMode by mutableStateOf(false)
     var searchQuery by mutableStateOf("")
-
-    var likedPosts by mutableStateOf<Set<String>>(emptySet())
-        private set
 
     fun getNotices() {
         viewModelScope.launch {
@@ -55,7 +54,7 @@ class FeedScreenViewModel @Inject constructor(
         }
     }
 
-    fun observePosts(){
+    fun observePosts() {
         postRepository.observePosts { updatedPost ->
             posts = updatedPost
         }
@@ -76,31 +75,23 @@ class FeedScreenViewModel @Inject constructor(
                 }
         }
     }
+
     fun toggleLike(postId: String) {
         val userId = auth.currentUser?.uid
-        viewModelScope.launch {
-            postRepository.isPostLikedByUser(postId, userId.toString()) { liked ->
-                if (liked) {
-                    postRepository.unlikePost(postId, userId.toString()) { success ->
-                        if (success) updateLikeCount(postId)
-                    }
+
+            viewModelScope.launch {
+                val hasLiked = postRepository.isPostLikedByUser(postId, userId.toString())
+
+                if (hasLiked) {
+                    postRepository.unlikePost(postId, userId.toString())
                 } else {
-                    postRepository.likePost(postId, userId.toString()) { success ->
-                        if (success) updateLikeCount(postId)
-                    }
+                    postRepository.likePost(postId, userId.toString()   )
                 }
             }
-        }
     }
 
-    private fun updateLikeCount(postId: String) {
-        postRepository.countLikes(postId) { count ->
-            posts = posts.map {
-                if (it.uid == postId) it.copy(likes = count)
-                else it
-            }
-        }
+    suspend fun isPostLikedByUserSuspend(postId: String): Boolean {
+        val userId = auth.currentUser?.uid ?: return false
+        return postRepository.isPostLikedByUser(postId, userId)
     }
-
-
 }

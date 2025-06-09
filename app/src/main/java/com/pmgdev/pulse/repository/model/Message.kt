@@ -1,5 +1,7 @@
 package com.pmgdev.pulse.repository.model
 
+import com.google.firebase.Timestamp
+
 /**
  *
  * Clase Message
@@ -11,5 +13,5 @@ data class Message(
     val id: String = "",
     val senderId: String = "",
     val text: String = "",
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Timestamp = Timestamp.now()
 )
