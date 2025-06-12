@@ -9,6 +9,7 @@ import com.pmgdev.pulse.repository.model.ChatPreview
 import com.pmgdev.pulse.repository.model.Fine
 import com.pmgdev.pulse.repository.model.Message
 import com.pmgdev.pulse.repository.model.User
+import com.pmgdev.pulse.utils.CryptoUtils
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -92,7 +93,7 @@ class ChatRepository @Inject constructor(
                             chatId = chat.id,
                             otherUserName = user.fullname,
                             otherUserImageUrl = user.profileImage,
-                            lastMessage = chat.lastMessage,
+                            lastMessage = CryptoUtils.decrypt(chat.lastMessage),
                             timestamp = chat.lastMessageTimestamp
                         )
                     )

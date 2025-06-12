@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,8 +35,6 @@ import com.pmgdev.pulse.ui.base.components.LoadingScreen
 import com.pmgdev.pulse.ui.theme.clairgreen
 import com.pmgdev.pulse.ui.theme.dark
 
-
-const val GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = 1001
 
 /**
  *
@@ -76,17 +75,19 @@ fun FitnessScreen(
             }
 
             if (viewModel.checkGoogleFitPermissions(context)) {
-                Log.d("GoogleFit", "Permisos OK, pidiendo datos")
-                viewModel.requestSteps(context)
-                viewModel.requestCalories(context)
+                Log.d("GoogleFit", "Permisos OK, pidiendo datos e iniciando sensor en tiempo real")
+                viewModel.initializeFitnessData(context)
             } else {
                 Log.d("GoogleFit", "No tiene permisos de Google Fit")
                 viewModel.setNotRegistered()
             }
         }
-
-
-
+        DisposableEffect(Unit) {
+            onDispose {
+                Log.d("GoogleFit", "FitnessScreen saliendo de la composición, desregistrando sensores.")
+                viewModel.stopRealtimeSteps(context)
+            }
+        }
 
 
         when {
@@ -128,6 +129,10 @@ fun FitnessScreenUserLogged(
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("¡Tu información de hoy!", style = MaterialTheme.typography.headlineMedium, color = Color.White)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Pasos de ayer", style = MaterialTheme.typography.headlineMedium, color = Color.White)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text("${viewModel.uiState.stepsYesterday} pasos", style = MaterialTheme.typography.titleLarge, color = Color.White)
             Spacer(modifier = Modifier.height(8.dp))
             Text("Pasos de hoy", style = MaterialTheme.typography.headlineMedium, color = Color.White)
             Spacer(modifier = Modifier.height(8.dp))
@@ -203,7 +208,3 @@ fun FitnessScreenUserNotLogged(
         }
     }
 }
-
-
-
-

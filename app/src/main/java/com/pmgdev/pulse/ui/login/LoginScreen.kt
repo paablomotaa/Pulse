@@ -3,11 +3,14 @@ package com.pmgdev.pulse.ui.login
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
@@ -26,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.pmgdev.pulse.R
 import com.pmgdev.pulse.ui.base.composables.BasePasswordField
 import com.pmgdev.pulse.ui.base.composables.BaseTextField
+import com.pmgdev.pulse.ui.base.composables.ChangeEmailDialog
 import com.pmgdev.pulse.ui.theme.dark
 import com.pmgdev.pulse.ui.theme.darkgreen
 import com.pmgdev.pulse.ui.theme.mediumgreen
@@ -33,6 +37,7 @@ import com.pmgdev.pulse.ui.theme.mediumgreen
 @Composable
 fun LoginScreen(goToRegister: () -> Unit, viewModel: LoginViewModel, goToHome: () -> Unit) {
     val context = LocalContext.current
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(viewModel.state.toastMessage) {
         viewModel.state.toastMessage?.let { message ->
@@ -40,9 +45,21 @@ fun LoginScreen(goToRegister: () -> Unit, viewModel: LoginViewModel, goToHome: (
             viewModel.clearToastMessage()
         }
     }
+
+    if(viewModel.state.showEmailDialog){
+        ChangeEmailDialog(
+            onConfirm = { newEmail ->
+                viewModel.changeEmail(newEmail)
+                viewModel.hideEmailDialog()
+            },
+            onDismiss = {
+                viewModel.hideEmailDialog()
+            }
+        )
+    }
     Column(
         modifier = Modifier.background(Brush.verticalGradient(colors = listOf(
-            darkgreen, dark))).fillMaxSize(),
+            darkgreen, dark))).fillMaxSize().verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.size(30.dp))
@@ -69,10 +86,11 @@ fun LoginScreen(goToRegister: () -> Unit, viewModel: LoginViewModel, goToHome: (
         Button(onClick = {viewModel.onLoginClick(goToHome)}, modifier = Modifier.fillMaxWidth(0.7f), colors = ButtonColors(containerColor = mediumgreen, contentColor = Color.White, disabledContentColor = Color.Red, disabledContainerColor = Color.Red)) {
             Text("Login")
         }
-        Spacer(modifier = Modifier.size(25.dp))
-        Text("¿No tienes una cuenta?", color = Color.White)
+        TextButton(onClick = {viewModel.showEmailDialog()}) {
+            Text("¿Has olvidado tu contraseña?")
+        }
         TextButton(onClick = {goToRegister()}) {
-            Text("Pulsa aquí")
+            Text("¿No tienes cuenta?")
         }
     }
 }

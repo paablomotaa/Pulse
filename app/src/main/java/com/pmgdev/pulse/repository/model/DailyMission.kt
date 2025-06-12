@@ -9,16 +9,12 @@ package com.pmgdev.pulse.repository.model
  *
  */
 data class DailyMission(
-    val id: String,
-    val title: String,
-    val description: String,
-    val goal: Int,
-    val progress: Int,
-    val type: MissionType,
-    val isCompleted: Boolean
+    val id: String = "",
+    val title: String = "",
+    val description: String = "",
+    val goal: Int = 0,
+    val progress: Int = 0,
+    val isCompleted: Boolean = false,
+    val daily: Boolean = true,
+    val active: Boolean = true,
 )
-
-enum class MissionType {
-    STEPS,
-    CALORIES
-}

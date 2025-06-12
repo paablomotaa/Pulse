@@ -87,24 +87,6 @@ fun EditProfileScreen(
                 isError = viewModel.state.bioError,
                 errorText = viewModel.state.errorBioText
             )
-
-            BaseNumberField(
-                value = viewModel.state.peso.toString(),
-                onValueChange = {
-                    viewModel.onPesoChange(it)
-                },
-                label = "Peso (kg)",
-
-            )
-
-            BaseNumberField(
-                value = viewModel.state.altura.toString(),
-                onValueChange = {
-                    viewModel.onAlturaChange(it)
-                },
-                label = "Altura (cm)",
-            )
-
             Spacer(modifier = Modifier.height(24.dp))
 
             BaseButton(

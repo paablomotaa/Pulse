@@ -92,6 +92,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.lottie.compose)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.security.crypto)
 
 
 
@@ -130,4 +131,6 @@ dependencies {
 
     //DataStore
     implementation(libs.datastore.preferences)
+
+    implementation("com.onesignal:OneSignal:[5.1.6, 5.1.99]")
 }

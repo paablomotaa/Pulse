@@ -9,6 +9,9 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.pmgdev.pulse.repository.firebaserepository.PostRepository
+import com.pmgdev.pulse.repository.firebaserepository.UserRepository
+import com.pmgdev.pulse.repository.model.Notification
+import com.pmgdev.pulse.repository.model.NotificationType
 import com.pmgdev.pulse.repository.model.Post
 import com.pmgdev.pulse.repository.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +32,8 @@ import javax.inject.Inject
 class FeedScreenViewModel @Inject constructor(
     val firestore: FirebaseFirestore,
     val postRepository: PostRepository,
-    val auth: FirebaseAuth
+    val auth: FirebaseAuth,
+    val userRepository: UserRepository
 ) : ViewModel() {
     var state by mutableStateOf<FeedScreenState>(FeedScreenState.Loading)
 
@@ -78,20 +82,48 @@ class FeedScreenViewModel @Inject constructor(
 
     fun toggleLike(postId: String) {
         val userId = auth.currentUser?.uid
+        viewModelScope.launch {
+            val hasLiked = postRepository.isPostLikedByUser(postId, userId.toString())
+            val user = userRepository.getUser(userId.toString())
 
-            viewModelScope.launch {
-                val hasLiked = postRepository.isPostLikedByUser(postId, userId.toString())
-
+            if(user != null){
                 if (hasLiked) {
                     postRepository.unlikePost(postId, userId.toString())
                 } else {
-                    postRepository.likePost(postId, userId.toString()   )
+                    postRepository.likePost(postId, userId.toString())
+                    notifyUser(user.uid)
                 }
             }
+
+        }
     }
 
     suspend fun isPostLikedByUserSuspend(postId: String): Boolean {
         val userId = auth.currentUser?.uid ?: return false
         return postRepository.isPostLikedByUser(postId, userId)
+    }
+
+    private fun notifyUser(targetUid: String) {
+        val currentUid = auth.currentUser?.uid ?: return
+        viewModelScope.launch {
+
+            val user = userRepository.getUser(currentUid)
+            if (user != null) {
+                userRepository.getUser(targetUid)
+                val notification = Notification(
+                    uid = "",
+                    uidSender = currentUid,
+                    uidReceiver = targetUid,
+                    usernameSender = user.username,
+                    notificationType = NotificationType.LIKE
+                )
+                val result = userRepository.pushNotificationFromUser(targetUid, notification)
+                if (result.isSuccess) {
+                    Log.d("Notificacion", "Notificacion enviada")
+                } else {
+                    Log.d("Notificacion", "Notificacion no enviada")
+                }
+            }
+        }
     }
 }

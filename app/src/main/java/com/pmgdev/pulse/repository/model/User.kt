@@ -20,11 +20,10 @@ data class User(
     val email: String = "",
     val fullname: String = "",
     val bio: String = "",
-    val peso: Int = 0,
-    val altura: Int = 0,
     val created_at: Date = Date(),
     val followers: Int = 0,
-    val following: Int = 0
+    val following: Int = 0,
+    val title:String = ""
 ) {
-    constructor() : this("","", "", "", "", "", 0, 0, Date(), 0, 0)
+    constructor() : this("","", "", "", "", "", Date(), 0, 0,"")
 }

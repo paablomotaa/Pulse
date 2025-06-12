@@ -13,8 +13,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.pmgdev.pulse.repository.firebaserepository.PostRepository
 import com.pmgdev.pulse.repository.firebaserepository.UserRepository
 import com.pmgdev.pulse.repository.model.Comment
+import com.pmgdev.pulse.repository.model.Notification
+import com.pmgdev.pulse.repository.model.NotificationType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import okhttp3.internal.notify
 import javax.inject.Inject
 
 
@@ -104,7 +107,8 @@ class PreviewPostViewModel @Inject constructor(
         val uiduser = auth.currentUser?.uid
         viewModelScope.launch {
             val user = userRepository.getUser(uiduser.toString())
-            if (user != null && statecomment.comment.isNotEmpty()) {
+            val post = postRepository.getPost(uid)
+            if (user != null && statecomment.comment.isNotEmpty() && post != null) {
                 postRepository.addComments(
                     uid, uiduser.toString(),
                     user.username, statecomment.comment
@@ -113,12 +117,38 @@ class PreviewPostViewModel @Inject constructor(
                     sended = true,
                     error = false
                 )
+                notifyUser(post.uiduser)
             }
             else{
                 statecomment = statecomment.copy(
                     sended = false,
                     error = true,
                 )
+            }
+        }
+    }
+
+    private fun notifyUser(targetUid:String){
+        val currentUid = auth.currentUser?.uid ?: return
+        viewModelScope.launch {
+
+            val user = userRepository.getUser(currentUid)
+            if(user != null){
+                userRepository.getUser(targetUid)
+                val notification = Notification(
+                    uid = "",
+                    uidSender = currentUid,
+                    uidReceiver = targetUid,
+                    usernameSender = user.username,
+                    notificationType = NotificationType.COMMENT
+                )
+                val result = userRepository.pushNotificationFromUser(targetUid,notification)
+                if(result.isSuccess){
+                    Log.d("Notificacion","Notificacion enviada")
+                }
+                else{
+                    Log.d("Notificacion","Notificacion no enviada")
+                }
             }
         }
     }

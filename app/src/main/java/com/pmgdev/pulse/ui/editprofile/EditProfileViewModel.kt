@@ -37,8 +37,6 @@ class EditProfileViewModel @Inject constructor(
                     username = user.username,
                     fullname = user.fullname,
                     bio = user.bio,
-                    peso = user.peso,
-                    altura = user.altura
                 )
             }
         }
@@ -102,16 +100,6 @@ class EditProfileViewModel @Inject constructor(
             errorBioText = ""
         )
     }
-
-    fun onPesoChange(peso: String) {
-        val value = peso.toIntOrNull() ?: 0
-        state = state.copy(peso = value)
-    }
-    fun onAlturaChange(altura:String){
-        val value = altura.toIntOrNull() ?: 0
-
-        state = state.copy(altura = value)
-    }
     fun onEditClick(goBack: () -> Boolean){
         if(hasEmptyFields()){
             state = state.copy(toastMessage = "Hay campos vacíos❌")
@@ -139,8 +127,6 @@ class EditProfileViewModel @Inject constructor(
                         fullname = state.fullname,
                         profileImage = state.image,
                         bio = state.bio,
-                        altura = state.altura,
-                        peso = state.peso
                     )
                     repository.editUser(auth.currentUser?.uid ?: "",updatedUser)
                     state = state.copy(toastMessage = "Edición correcta.✅")

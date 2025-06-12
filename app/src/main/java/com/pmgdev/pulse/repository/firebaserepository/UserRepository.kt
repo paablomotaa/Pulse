@@ -5,12 +5,15 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.messaging.messaging
 import com.google.firebase.storage.FirebaseStorage
 import com.pmgdev.pulse.repository.model.Follow
+import com.pmgdev.pulse.repository.model.Notification
 import com.pmgdev.pulse.repository.model.User
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
@@ -153,18 +156,6 @@ class UserRepository @Inject constructor(
             Result.failure(e)
         }
     }
-    suspend fun changePassword(newPassword: String): Result<Boolean> {
-        return try {
-            val user =
-                auth.currentUser ?: return Result.failure(Exception("Usuario no autenticado"))
-
-            user.updatePassword(newPassword).await()
-
-            Result.success(true)
-        } catch (e:Exception){
-            Result.failure(e)
-        }
-    }
     suspend fun deleteAccount(): Result<Boolean>{
         return try{
             val user = auth.currentUser ?: return Result.failure(Exception("Usuario no autenticado"))
@@ -191,6 +182,36 @@ class UserRepository @Inject constructor(
             Result.success(true)
         } catch (e: Exception){
             Result.failure(e)
+        }
+    }
+
+    suspend fun getNotificationsFromUser(userId:String) : List<Notification>{
+        val notificationsRef = firestore.collection("users").document(userId).collection("notifications").get().await()
+        return notificationsRef.toObjects(Notification::class.java)
+    }
+    suspend fun pushNotificationFromUser(userId:String, notification: Notification):Result<Unit>{
+
+        return try {
+            val notificationRef = firestore.collection("users").document(userId).collection("notifications").add(notification)
+            notificationRef.await()
+
+            return Result.success(Unit)
+        } catch (e: Exception){
+            return Result.failure(e)
+        }
+    }
+    suspend fun saveFcmTokenForCurrentUser(userId: String) {
+        Firebase.messaging.token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("FCM", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+
+            val token = task.result
+            val userDocRef = firestore.collection("users").document(userId)
+            userDocRef.update("fcmToken", token)
+                .addOnSuccessListener {
+                }
         }
     }
 }

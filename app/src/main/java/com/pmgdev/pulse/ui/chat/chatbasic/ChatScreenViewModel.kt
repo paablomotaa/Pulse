@@ -12,6 +12,7 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.pmgdev.pulse.repository.firebaserepository.ChatRepository
 import com.pmgdev.pulse.repository.model.Fine
 import com.pmgdev.pulse.repository.model.Message
+import com.pmgdev.pulse.utils.CryptoUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,15 +27,16 @@ import javax.inject.Inject
 class ChatScreenViewModel @Inject constructor(
     private val repository: ChatRepository,
     private val auth: FirebaseAuth
-): ViewModel() {
+) : ViewModel() {
 
     var text by mutableStateOf("")
         private set
     var messages = mutableStateOf<List<Message>>(emptyList())
-    private set
-    private var messageListener: ListenerRegistration? = null //Para que se pueda cambiar de chat y siga escuchando otros mensajes
+        private set
+    private var messageListener: ListenerRegistration? =
+        null //Para que se pueda cambiar de chat y siga escuchando otros mensajes
 
-    fun onTextChange(txt:String){
+    fun onTextChange(txt: String) {
         text = txt
     }
 
@@ -53,7 +55,15 @@ class ChatScreenViewModel @Inject constructor(
         messageListener = repository.observeMessages(
             chatId = chatId,
             onChange = { msgs ->
-                messages.value = msgs
+                messages.value = msgs.map { msg ->
+                    msg.copy(
+                        text = try {
+                            CryptoUtils.decrypt(msg.text ?: "")
+                        } catch (e: Exception) {
+                            "[Mensaje no válido]"
+                        }
+                    )
+                }
             },
             onError = { e ->
                 Log.d("ERROR observeMessages", e.message.toString())
@@ -76,7 +86,15 @@ class ChatScreenViewModel @Inject constructor(
             repository.getMessages(
                 chatId = chatId,
                 { msg ->
-                    messages.value = msg
+                    messages.value = msg.map { msg ->
+                        msg.copy(
+                            text = try {
+                                CryptoUtils.decrypt(msg.text ?: "")
+                            } catch (e: Exception) {
+                                "[Mensaje no válido]"
+                            }
+                        )
+                    }
                 },
                 { e ->
                     Log.d("ERROR loadingMessages", e.message.toString())
@@ -84,6 +102,7 @@ class ChatScreenViewModel @Inject constructor(
             )
         }
     }
+
     /**
      *
      * sendMessage
@@ -94,10 +113,12 @@ class ChatScreenViewModel @Inject constructor(
      *
      */
     fun sendMessage(chatId: String) {
+        val encryptedText = CryptoUtils.encrypt(text)
+
         val message = Message(
             id = "",
             senderId = auth.currentUser?.uid ?: "",
-            text = text,
+            text = encryptedText,
             timestamp = Timestamp.now()
         )
 
@@ -119,15 +140,15 @@ class ChatScreenViewModel @Inject constructor(
      *
      */
 
-    fun messageIsFrom(senderId:String):Boolean{
+    fun messageIsFrom(senderId: String): Boolean {
         val currentUid = auth.currentUser?.uid
-        if(currentUid != senderId){
+        if (currentUid != senderId) {
             return false
-        }
-        else{
+        } else {
             return true
         }
     }
+
     /**
      *
      * createFine
@@ -136,10 +157,14 @@ class ChatScreenViewModel @Inject constructor(
      *
      */
 
-    fun createFine(chatId:String){
-        Fine(
-            userId = auth.currentUser?.uid ?: "",
-            chatId = chatId
+    fun createFine(chatId: String) {
+
+        repository.createFine(
+            Fine(
+                userId = auth.currentUser?.uid ?: "",
+                chatId = chatId
+            )
         )
+
     }
 }

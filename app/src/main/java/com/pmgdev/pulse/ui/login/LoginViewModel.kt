@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.pmgdev.pulse.network.Session
-import com.pmgdev.pulse.network.Session.Companion.email
+import com.pmgdev.pulse.repository.firebaserepository.UserRepository
 import com.pmgdev.pulse.utils.isValidEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -25,7 +25,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val auth: FirebaseAuth,
-    private val session: Session
+    private val session: Session,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     var state by mutableStateOf(LoginScreenState())
         private set
@@ -87,6 +88,7 @@ class LoginViewModel @Inject constructor(
         }
         auth.signInWithEmailAndPassword(state.email.trim(),state.password.trim()).addOnCompleteListener{ test ->
             if(test.isSuccessful){
+
                 state = state.copy(toastMessage = "Login correcto✅")
                 viewModelScope.launch {
                     session.saveUserSession(
@@ -94,7 +96,10 @@ class LoginViewModel @Inject constructor(
                         userPassword = state.password,
                         isUserLoggedIn = true
                     )
+                    userRepository.saveFcmTokenForCurrentUser(auth.currentUser?.uid ?: "")
                 }
+
+
                 goToHome()
             }
             else{
@@ -133,5 +138,21 @@ class LoginViewModel @Inject constructor(
         state = state.copy(
             toastMessage = ""
         )
+    }
+    fun showEmailDialog() {
+        state = state.copy(showEmailDialog = true)
+    }
+    fun hideEmailDialog(){
+        state = state.copy(showEmailDialog = false)
+    }
+    fun changeEmail(newEmail: String) {
+        viewModelScope.launch {
+            val result = userRepository.changeEmail(newEmail)
+            state = if (result.isSuccess) {
+                state.copy(toastMessage = "Email cambiado correctamente.")
+            } else {
+                state.copy(toastMessage = "Error al cambiar el email: ${result.exceptionOrNull()?.message ?: "Desconocido"}")
+            }
+        }
     }
 }

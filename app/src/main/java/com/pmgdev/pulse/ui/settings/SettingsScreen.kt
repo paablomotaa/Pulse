@@ -113,27 +113,6 @@ fun SettingsScreen(
                         ) {
                             Text("Contactar con nosotros")
                         }
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Tema oscuro",
-                                color = Color.White,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            /*Switch(
-                                checked = isDarkThemeEnabled,
-                                onCheckedChange = { viewModel.toggleTheme() },
-                                colors = SwitchDefaults.colors(
-                                    checkedThumbColor = mediumgreen,
-                                    uncheckedThumbColor = Color.Gray
-                                )
-                            )*/
-                        }
-
                         Button(
                             onClick = { viewModel.showEmailDialog() },
                             modifier = Modifier.fillMaxWidth(),

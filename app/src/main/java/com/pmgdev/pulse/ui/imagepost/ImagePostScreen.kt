@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -31,6 +33,7 @@ import com.pmgdev.pulse.ui.theme.dark
 
 @Composable
 fun ImagePostScreen(navController: NavController,viewModel: ImagePostViewModel,onBack:() -> Unit){
+
     BaseScaffold(
         title = "Nueva publicación",
         navController = navController,
@@ -48,6 +51,7 @@ fun ImagePostContent(
     viewModel: ImagePostViewModel,
     onBack: () -> Unit
 ){
+    val scrollState = rememberScrollState()
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.state.toastMessage?.let { message ->
@@ -62,7 +66,7 @@ fun ImagePostContent(
         contentAlignment = Alignment.TopCenter
     ){
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.size(16.dp))

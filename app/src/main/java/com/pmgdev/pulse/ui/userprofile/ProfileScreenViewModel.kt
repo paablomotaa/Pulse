@@ -13,6 +13,8 @@
     import com.pmgdev.pulse.repository.firebaserepository.ChatRepository
     import com.pmgdev.pulse.repository.firebaserepository.PostRepository
     import com.pmgdev.pulse.repository.firebaserepository.UserRepository
+    import com.pmgdev.pulse.repository.model.Notification
+    import com.pmgdev.pulse.repository.model.NotificationType
     import com.pmgdev.pulse.repository.model.Post
     import dagger.hilt.android.lifecycle.HiltViewModel
     import kotlinx.coroutines.launch
@@ -108,13 +110,38 @@
                         currentUsername = "",
                         targetUsername = "",
                     )
+                    notifyUser(targetUid)
                     isFollowing = true
                 }
                 val updatedUser = repository.getUser(targetUid)
                 state = ProfileScreenState.Success(updatedUser)
             }
         }
+        
+        private fun notifyUser(targetUid:String){
+            val currentUid = auth.currentUser?.uid ?: return
+            viewModelScope.launch {
 
+                val user = repository.getUser(currentUid)
+                if(user != null){
+                    repository.getUser(targetUid)
+                    val notification = Notification(
+                        uid = "",
+                        uidSender = currentUid,
+                        uidReceiver = targetUid,
+                        usernameSender = user.username,
+                        notificationType = NotificationType.FOLLOW
+                    )
+                    val result = repository.pushNotificationFromUser(targetUid,notification)
+                    if(result.isSuccess){
+                        Log.d("Notificacion","Notificacion enviada")
+                    }
+                    else{
+                        Log.d("Notificacion","Notificacion no enviada")
+                    }
+                }
+            }
+        }
         /**
          *
          * iniciateChat

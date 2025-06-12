@@ -1,5 +1,7 @@
 package com.pmgdev.pulse.ui.signup
 
+import DateField
+import DialogDate
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -7,6 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
@@ -29,6 +33,7 @@ import com.pmgdev.pulse.ui.theme.mediumgreen
 @Composable
 fun RegisterScreen(goToLogin: () -> Unit,viewModel:RegisterViewModel) {
     val context = LocalContext.current
+    val scrollState = rememberScrollState()
 
     //Para que salga un toast cada vez que haya algo mal.
     LaunchedEffect(viewModel.state.toastMessage) {
@@ -42,7 +47,7 @@ fun RegisterScreen(goToLogin: () -> Unit,viewModel:RegisterViewModel) {
         modifier = Modifier.background(
             Brush.verticalGradient(colors = listOf(
             darkgreen, dark
-            ))).fillMaxSize(),
+            ))).fillMaxSize().verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.size(100.dp))
@@ -57,12 +62,19 @@ fun RegisterScreen(goToLogin: () -> Unit,viewModel:RegisterViewModel) {
             errorText = viewModel.state.nameErrorText
         )
         Spacer(modifier = Modifier.size(25.dp))
-        BaseTextField(
-            value = viewModel.state.date,
-            label = "Fecha de nacimiento",
-            onValueChange = {viewModel.onDateChange(it)},
-            isError = viewModel.state.isDateError,
-            errorText = viewModel.state.dateErrorText
+        DateField(
+            showDialog = { viewModel.showDatePicker() },
+            selectedDate = viewModel.state.date,
+            isDateError = viewModel.state.isDateError,
+            text = "Fecha de Nacimiento",
+            dateFormatError = viewModel.state.dateErrorText,
+            modifier = Modifier
+        )
+
+        DialogDate(
+            showDialog = viewModel.state.showDatePickerDialog,
+            onShowDialog = { viewModel.hideDatePicker() },
+            onSelectedDate = { date -> viewModel.onDateSelected(date) }, // Sigue enviando LocalDate al ViewModel
         )
         Spacer(modifier = Modifier.size(25.dp))
         BaseTextField(

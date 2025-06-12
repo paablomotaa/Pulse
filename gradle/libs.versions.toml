@@ -23,6 +23,9 @@ google-play-services = "21.1.0"
 google-auth = "21.0.0"
 firebase-messaging = "24.0.0"
 datastore = "1.0.0"
+androidx-security = "1.1.0-alpha06"
+onesignal = "4.8.6"
+onesignal-plugin = "0.14.0"
 
 
 [libraries]
@@ -83,6 +86,11 @@ google-auth = { module = "com.google.android.gms:play-services-auth", version.re
 
 #DataStore
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+
+#EncryptedSharedPreferences
+
+security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "androidx-security" }
+
 
 
 [plugins]

@@ -196,7 +196,7 @@ fun PostDetailContent(
                         else{
                             BaseButton(
                                 //Funcion para eliminar
-                                onClick = {},
+                                onClick = {viewModel.deletePost(post.uid)},
                                 label = "Eliminar"
                             )
                         }

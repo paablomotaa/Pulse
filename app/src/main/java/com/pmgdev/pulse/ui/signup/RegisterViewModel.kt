@@ -14,6 +14,8 @@ import com.pmgdev.pulse.utils.ValidatePassword
 import com.pmgdev.pulse.utils.isValidEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import javax.inject.Inject
 
@@ -35,6 +37,9 @@ class RegisterViewModel @Inject constructor(
     var state by mutableStateOf(RegisterScreenState())
         private set
 
+    private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+
+
     fun onNameChange(name:String){
         if(name.isEmpty()){
             state = state.copy(
@@ -51,21 +56,21 @@ class RegisterViewModel @Inject constructor(
             )
         }
     }
-    fun onDateChange(date:String){
-        if(date.isEmpty()){
-            state = state.copy(
-                date = date,
-                isDateError = true,
-                dateErrorText = "Esta vacío"
-            )
-        }
-        else{
-            state = state.copy(
-                date = date,
-                isDateError = false,
-                dateErrorText = ""
-            )
-        }
+    fun onDateSelected(date: LocalDate) {
+        val dateAsString = date.format(dateFormatter)
+        state = state.copy(
+            date = dateAsString,
+            isDateError = false,
+            dateErrorText = ""
+        )
+    }
+
+    fun showDatePicker() {
+        state = state.copy(showDatePickerDialog = true)
+    }
+
+    fun hideDatePicker() {
+        state = state.copy(showDatePickerDialog = false)
     }
 
 
@@ -176,11 +181,10 @@ class RegisterViewModel @Inject constructor(
                             email = state.email,
                             fullname = state.name,
                             bio = "",
-                            peso = 0,
-                            altura = 0,
                             created_at = Date(),
                             followers = 0,
                             following = 0,
+                            title = ""
                         )
                         viewModelScope.launch {
                             repository.addUser(newUser)
@@ -239,5 +243,4 @@ class RegisterViewModel @Inject constructor(
     fun clearToastMessage() {
         state = state.copy(toastMessage = null)
     }
-
 }

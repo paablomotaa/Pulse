@@ -18,8 +18,9 @@ data class RegisterScreenState (
     val emailErrorText:String = "",
     val passwordErrorText:String = "",
     val usernameErrorText:String = "",
-    val toastMessage:String? = "",
+    val toastMessage:String? = null,
 
     val success:Boolean = false,
-    val isGlobalError:Boolean = false
+    val isGlobalError:Boolean = false,
+    val showDatePickerDialog: Boolean = false
 )

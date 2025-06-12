@@ -1,12 +1,17 @@
 package com.pmgdev.pulse.network
 
 import android.content.Context
+import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessOptions
+import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.fitness.request.DataReadRequest
+import com.google.android.gms.fitness.request.OnDataPointListener
+import com.google.android.gms.fitness.request.SensorRequest
+import com.pmgdev.pulse.ui.fitness.FitnessScreenViewModel
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
@@ -19,7 +24,9 @@ import java.util.concurrent.TimeUnit
  *
  */
 object GoogleFitManager {
-    fun getStepsToday(context: Context, onStepsRead: (Int) -> Unit, onError: (Exception) -> Unit) {
+    private var stepSensorListener: OnDataPointListener? = null
+
+    fun getStepsForDay(context: Context, dayOffset: Long, onStepsRead: (Int) -> Unit, onError: (Exception) -> Unit) {
         val fitnessOptions = FitnessOptions.builder()
             .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
             .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
@@ -27,12 +34,12 @@ object GoogleFitManager {
 
         val account = GoogleSignIn.getAccountForExtension(context, fitnessOptions)
 
-        val end = System.currentTimeMillis()
-        val start = ZonedDateTime.now().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val endOfDay = ZonedDateTime.now(ZoneId.systemDefault()).plusDays(dayOffset + 1).toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli() - 1 // Fin del día (un milisegundo antes de la medianoche del día siguiente)
+        val startOfDay = ZonedDateTime.now(ZoneId.systemDefault()).plusDays(dayOffset).toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
         val request = DataReadRequest.Builder()
             .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-            .setTimeRange(start, end, TimeUnit.MILLISECONDS)
+            .setTimeRange(startOfDay, endOfDay, TimeUnit.MILLISECONDS)
             .bucketByTime(1, TimeUnit.DAYS)
             .build()
 
@@ -86,6 +93,59 @@ object GoogleFitManager {
             }
             .addOnFailureListener { e ->
                 onError(e)
+            }
+    }
+
+    fun registerStepSensor(context: Context, onStepUpdate: (Int) -> Unit, onError: (Exception) -> Unit) {
+        val fitnessOptions = FitnessOptions.builder()
+            .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+            .build()
+
+        val account = GoogleSignIn.getAccountForExtension(context, fitnessOptions)
+
+        stepSensorListener = OnDataPointListener { dataPoint: DataPoint ->
+            for (field in dataPoint.dataType.fields) {
+                if (field.name == Field.FIELD_STEPS.name) {
+                    val steps = dataPoint.getValue(field).asInt()
+                    onStepUpdate(steps)
+                }
+            }
+        }
+
+        Fitness.getSensorsClient(context, account)
+            .add(
+                SensorRequest.Builder()
+                    .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
+                    .setSamplingRate(10, TimeUnit.SECONDS)
+                    .build(),
+                stepSensorListener!!
+            )
+            .addOnSuccessListener {
+                Log.d("GoogleFit", "Sensor de pasos registrado con éxito!")
+            }
+            .addOnFailureListener { e ->
+                Log.e("GoogleFit", "Fallo al registrar el sensor de pasos: ${e.message}")
+                onError(e)
+            }
+    }
+    fun unregisterStepSensor(context: Context) {
+        if (stepSensorListener == null) {
+            return
+        }
+
+        val fitnessOptions = FitnessOptions.builder()
+            .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+            .build()
+        val account = GoogleSignIn.getAccountForExtension(context, fitnessOptions)
+
+        Fitness.getSensorsClient(context, account)
+            .remove(stepSensorListener!!)
+            .addOnSuccessListener {
+                Log.d("GoogleFit", "Sensor de pasos desregistrado con éxito.")
+                stepSensorListener = null
+            }
+            .addOnFailureListener { e ->
+                Log.e("GoogleFit", "Fallo al desregistrar el sensor de pasos: ${e.message}")
             }
     }
 }

@@ -173,17 +173,20 @@ fun FeedItem(post: Post,goToPostPreview: (String) -> Unit,viewModel: FeedScreenV
                         Icon(imageVector = Icons.Filled.Favorite, contentDescription = "Like", tint = Color.Red)
                     }
                     else{
-                        Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "Like")
+                        Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "Like", tint = Color.White)
                     }
                 }
                 IconButton(onClick = {goToPostPreview(post.uid)}) {
-                    Icon(imageVector = Icons.Default.MailOutline, contentDescription = "")
+                    Icon(imageVector = Icons.Default.MailOutline, contentDescription = "", tint = Color.White)
                 }
             }
-            Row {
-                Spacer(modifier = Modifier.size(10.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Text("Le gustan a ${post.likes} personas")
-                Spacer(modifier = Modifier.size(30.dp))
                 Text("${post.comments} Comentarios")
             }
         }
@@ -249,7 +252,10 @@ fun SearchScreen(
                                 )
                                 Spacer(modifier = Modifier.size(12.dp))
                                 Column {
-                                    Text(user.username, style = MaterialTheme.typography.titleMedium)
+                                    Text(
+                                        user.username,
+                                        style = MaterialTheme.typography.titleMedium
+                                    )
                                     Text(user.email, style = MaterialTheme.typography.bodySmall)
                                 }
                             }
@@ -260,4 +266,3 @@ fun SearchScreen(
         }
     }
 }
-

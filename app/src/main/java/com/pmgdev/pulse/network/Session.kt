@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,10 +17,15 @@ class Session @Inject constructor(private val dataStore: DataStore<Preferences>)
         private const val EMAIL = "Email"
         private const val PASSWORD = "Password"
         private const val USERNAME = "UserName"
+        private const val REALTIME_STEPS_TODAY = "realtime_steps_today"
+        private const val LAST_STEP_DATE = "last_step_date"
+
         val email = stringPreferencesKey(EMAIL)
         val isLogin = booleanPreferencesKey(IS_LOGIN)
         val password = stringPreferencesKey(PASSWORD)
         val userName = stringPreferencesKey(USERNAME)
+        val realtimeStepsTodayKey = intPreferencesKey(REALTIME_STEPS_TODAY)
+        val lastStepDateKey = longPreferencesKey(LAST_STEP_DATE)
     }
 
     fun isUserLoggedIn(): Flow<Boolean> {
@@ -91,5 +97,33 @@ class Session @Inject constructor(private val dataStore: DataStore<Preferences>)
             preferences.clear()
         }
     }
+    suspend fun saveRealtimeStepsToday(steps: Int) {
+        dataStore.edit { preference ->
+            preference[realtimeStepsTodayKey] = steps
+            preference[lastStepDateKey] = System.currentTimeMillis() // Guarda la hora actual
+        }
+    }
+    fun getRealtimeStepsToday(): Flow<Int> {
+        return dataStore.data.catch {
+            emit(emptyPreferences())
+        }.map { preferences ->
+            val lastSavedDate = preferences[lastStepDateKey] ?: 0L
+            val today = System.currentTimeMillis()
+
+
+            if (!isSameDay(lastSavedDate, today)) {
+                0
+            } else {
+                preferences[realtimeStepsTodayKey] ?: 0
+            }
+        }
+    }
+    private fun isSameDay(timestamp1: Long, timestamp2: Long): Boolean {
+        val cal1 = Calendar.getInstance().apply { timeInMillis = timestamp1 }
+        val cal2 = Calendar.getInstance().apply { timeInMillis = timestamp2 }
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
+    }
+
 
 }

@@ -22,6 +22,7 @@ import com.pmgdev.pulse.ui.imagepost.ImagePostViewModel
 import com.pmgdev.pulse.ui.missions.DailyMissionsScreen
 import com.pmgdev.pulse.ui.missions.DailyMissionsViewModel
 import com.pmgdev.pulse.ui.notifications.NotificationsScreen
+import com.pmgdev.pulse.ui.notifications.NotificationsScreenViewModel
 import com.pmgdev.pulse.ui.previewpost.PostDetailScreen
 import com.pmgdev.pulse.ui.previewpost.PreviewPostViewModel
 import com.pmgdev.pulse.ui.settings.SettingsScreen
@@ -49,7 +50,7 @@ object NavHome {
     fun chatBasic(chatId:String) = "$ROUTE/chat/$chatId"
     fun listChats() = "$ROUTE/listchat"
     fun fitnessscreen() = "$ROUTE/fitness"
-    fun missionsscreen(steps: Int, kcal: Float) = "$ROUTE/missions_screen/$steps/$kcal"
+    fun missionsscreen(steps: Int) = "$ROUTE/missions_screen/$steps"
     fun settingsscreen() = "$ROUTE/settings"
 
 
@@ -100,8 +101,10 @@ object NavHome {
     }
     private fun NavGraphBuilder.notifications(navController: NavController){
         composable(route = notificationsscreen()){
+            val viewModel: NotificationsScreenViewModel = hiltViewModel()
             NotificationsScreen(
                 navController,
+                viewModel = viewModel
             )
         }
     }
@@ -190,27 +193,24 @@ object NavHome {
             FitnessScreen(
                 viewModel,
                 navController,
-                {navController.navigate(missionsscreen(viewModel.uiState.steps,viewModel.uiState.calories))}
+                {navController.navigate(missionsscreen(10000))}
             )
         }
     }
     private fun NavGraphBuilder.missionsScreen(navController: NavController) {
         composable(
-            route = "$ROUTE/missions_screen/{steps}/{kcal}",
+            route = "$ROUTE/missions_screen/{steps}",
             arguments = listOf(
                 navArgument("steps") { type = NavType.IntType },
-                navArgument("kcal") { type = NavType.FloatType }
             )
         ) { backStackEntry ->
             val viewModel: DailyMissionsViewModel = hiltViewModel()
             val steps = backStackEntry.arguments?.getInt("steps") ?: 0
-            val kcal = backStackEntry.arguments?.getFloat("kcal") ?: 0f
 
             DailyMissionsScreen(
                 viewModel,
                 navController,
                 steps = steps,
-                kcal = kcal
             )
         }
     }
@@ -228,5 +228,4 @@ object NavHome {
             )
         }
     }
-
 }
