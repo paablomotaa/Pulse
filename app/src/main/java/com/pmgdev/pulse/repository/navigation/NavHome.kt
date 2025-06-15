@@ -193,7 +193,9 @@ object NavHome {
             FitnessScreen(
                 viewModel,
                 navController,
-                {navController.navigate(missionsscreen(10000))}
+                {navController.navigate(missionsscreen(
+                    steps = viewModel.uiState.steps
+                ))}
             )
         }
     }

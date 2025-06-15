@@ -60,31 +60,39 @@ fun ChatListScreen(
         navController = navController,
         showBottomBar = false,
         navIcon = arrowBack(),
-        navIconAction = {goToFeed()},
+        navIconAction = { goToFeed() },
     ) { paddingValues ->
 
-        when(viewModel.state.value){
+        when (viewModel.state.value) {
             ChatListState.NoData -> {
                 NoDataScreen(paddingValues)
             }
+
             ChatListState.isLoading -> {
                 LoadingScreen(paddingValues)
             }
+
             ChatListState.Success -> {
                 ChatScreenContent(paddingValues, chats, goToChat)
             }
         }
     }
 }
+
 @Composable
-fun ChatScreenContent(paddingValues: PaddingValues,chats: List<ChatPreview>,goToChat: (String) -> Unit){
+fun ChatScreenContent(
+    paddingValues: PaddingValues,
+    chats: List<ChatPreview>,
+    goToChat: (String) -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues).background(Brush.verticalGradient(listOf(clairgreen,dark)))
+            .padding(paddingValues)
+            .background(Brush.verticalGradient(listOf(clairgreen, dark)))
     ) {
         items(chats) { chat ->
-            ChatPreviewItem(chat = chat, onClick = { chatId ->  goToChat(chatId) })
+            ChatPreviewItem(chat = chat, onClick = { chatId -> goToChat(chatId) })
             Divider()
         }
     }
@@ -107,10 +115,9 @@ fun ChatPreviewItem(chat: ChatPreview, onClick: (String) -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            val imageModel = if(chat.otherUserImageUrl.isNullOrBlank()){
+            val imageModel = if (chat.otherUserImageUrl.isNullOrBlank()) {
                 R.drawable.logo_pulse_transparent
-            }
-            else{
+            } else {
                 chat.otherUserImageUrl
             }
 
@@ -138,7 +145,10 @@ fun ChatPreviewItem(chat: ChatPreview, onClick: (String) -> Unit) {
             }
 
             Text(
-                text = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(chat.timestamp.toDate()),
+                text = SimpleDateFormat(
+                    "dd/MM/yyyy HH:mm",
+                    Locale.getDefault()
+                ).format(chat.timestamp.toDate()),
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.White
             )
