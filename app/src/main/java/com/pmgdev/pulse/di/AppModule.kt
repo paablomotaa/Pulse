@@ -7,9 +7,12 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.google.ai.client.generativeai.type.content
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.pmgdev.pulse.network.NotificationClient
+import com.pmgdev.pulse.network.NotificationService
 import com.pmgdev.pulse.network.Session
 import com.pmgdev.pulse.repository.firebaserepository.ChatRepository
 import com.pmgdev.pulse.repository.firebaserepository.UserRepository
@@ -44,10 +47,12 @@ object AppModule {
     }
     @Singleton
     @Provides
-    fun provideRepositoryChat(firestore: FirebaseFirestore): ChatRepository
+    fun provideRepositoryChat(firestore: FirebaseFirestore,auth: FirebaseAuth,@ApplicationContext context: Context): ChatRepository
     {
         return ChatRepository(
-            firestore
+            firestore,
+            auth,
+            context
         )
     }
     @Singleton
@@ -67,5 +72,15 @@ object AppModule {
     @Singleton
     fun provideSession(dataStore:DataStore<Preferences>):Session{
         return Session(dataStore)
+    }
+    @Provides
+    @Singleton
+    fun provideRetrofitNotification(): NotificationService{
+        return NotificationClient.create()
+    }
+    @Provides
+    @Singleton
+    fun provideContext(@ApplicationContext context: Context): Context{
+        return context
     }
 }

@@ -13,8 +13,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.pmgdev.pulse.repository.firebaserepository.PostRepository
 import com.pmgdev.pulse.repository.firebaserepository.UserRepository
 import com.pmgdev.pulse.repository.model.Comment
+import com.pmgdev.pulse.repository.model.Fine
 import com.pmgdev.pulse.repository.model.Notification
 import com.pmgdev.pulse.repository.model.NotificationType
+import com.pmgdev.pulse.repository.model.TypeFine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import okhttp3.internal.notify
@@ -44,6 +46,11 @@ class PreviewPostViewModel @Inject constructor(
         private set
     var isCurrentUserPost by mutableStateOf(false)
     private set
+    var showDialogFine by mutableStateOf(false)
+    private set
+    var showDialogDelete by mutableStateOf(false)
+    private set
+
 
     /**
      *
@@ -128,6 +135,15 @@ class PreviewPostViewModel @Inject constructor(
         }
     }
 
+    /**
+     *
+     * notifyUser
+     *
+     * Notifica al usuario que ha recibido un comentario.
+     *
+     * @param targetUid
+     *
+     */
     private fun notifyUser(targetUid:String){
         val currentUid = auth.currentUser?.uid ?: return
         viewModelScope.launch {
@@ -153,9 +169,45 @@ class PreviewPostViewModel @Inject constructor(
         }
     }
 
+    fun showDialogDelete(){
+        showDialogDelete = true
+    }
+    fun hideDialogDelete(){
+        showDialogDelete = false
+    }
+
+    fun showDialogFine(){
+        showDialogFine = true
+    }
+
+    fun hideDialogFine(){
+        showDialogFine = false
+    }
+
     fun deletePost(postId:String){
         viewModelScope.launch {
             postRepository.deletePost(postId)
+        }
+    }
+
+    /**
+     *
+     * createFine
+     *
+     * Crea una penalización en la base de datos.
+     *
+     * @param chatId
+     *
+     */
+    fun createFine(chatId: String) {
+        viewModelScope.launch {
+            postRepository.createFine(
+                Fine(
+                    userId = auth.currentUser?.uid ?: "",
+                    reportedId = chatId,
+                    TypeFine = TypeFine.POST
+                )
+            )
         }
     }
 }

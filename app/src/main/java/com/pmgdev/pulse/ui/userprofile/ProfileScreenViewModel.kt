@@ -1,13 +1,11 @@
     package com.pmgdev.pulse.ui.userprofile
 
-    import com.pmgdev.pulse.repository.model.Message
     import android.util.Log
     import androidx.compose.runtime.getValue
     import androidx.compose.runtime.mutableStateOf
     import androidx.compose.runtime.setValue
     import androidx.lifecycle.ViewModel
     import androidx.lifecycle.viewModelScope
-    import com.google.firebase.Timestamp
     import com.google.firebase.auth.FirebaseAuth
     import com.google.firebase.firestore.FirebaseFirestore
     import com.pmgdev.pulse.repository.firebaserepository.ChatRepository
@@ -117,7 +115,16 @@
                 state = ProfileScreenState.Success(updatedUser)
             }
         }
-        
+
+        /**
+         *
+         *notifyUser
+         *
+         * Metodo para notificar a un usuario que ha seguido a otro.
+         *
+         * @param targetUid
+         *
+         */
         private fun notifyUser(targetUid:String){
             val currentUid = auth.currentUser?.uid ?: return
             viewModelScope.launch {
@@ -146,7 +153,7 @@
          *
          * iniciateChat
          *
-         * Metodo para crear un chat accesible desde el perfil.
+         * Metodo para crear un chat.
          *
          */
         fun iniciateChat(
@@ -157,11 +164,6 @@
                 repositorych.createChatIfNotExists(
                     userId1 = auth.currentUser?.uid ?: "",
                     userId2 = userId,
-                    firstMessage = Message(
-                        text = "",
-                        senderId = auth.currentUser?.uid ?: "",
-                        timestamp = Timestamp.now(),
-                    ),
                     onComplete = { chatId ->
                         Log.d("Navegando al chat",chatId)
                         goChat(chatId)
@@ -170,7 +172,15 @@
             }
         }
 
-
+        /**
+         *
+         * getUserPosts
+         *
+         * Metodo para obtener los posts de un usuario.
+         *
+         * @param userId
+         *
+         */
         fun getUserPosts(userId: String) {
             Log.d("POSTS","OBTENIENDO POSTS DE " + userId)
             viewModelScope.launch {

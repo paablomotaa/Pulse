@@ -18,12 +18,26 @@ class ChatListScreenViewModel @Inject constructor(
 
     var chatPreviews = mutableStateOf<List<ChatPreview>>(emptyList())
     private set
+    var state = mutableStateOf<ChatListState>(ChatListState.isLoading)
 
+    /**
+     *
+     * loadChats
+     *
+     * Metodo para cargar los chats del usuario.
+     *
+     */
     fun loadChats() {
         val uid = auth.currentUser?.uid
         viewModelScope.launch {
             val result = repository.getChatFromUser(uid.toString())
-            chatPreviews.value = result
+            if(result.isEmpty()){
+                state.value = ChatListState.NoData
+            }
+            else{
+                state.value = ChatListState.Success
+                chatPreviews.value = result
+            }
         }
     }
 }

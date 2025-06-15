@@ -21,6 +21,15 @@ class NotificationsScreenViewModel @Inject constructor(
     var state by mutableStateOf<NotificationsScreenState>(NotificationsScreenState.isLoading)
     private set
 
+    /**
+     *
+     * getNotifications
+     *
+     * Obtiene las notificaciones del usuario.
+     *
+     * @param notifications
+     *
+     */
     fun getNotifications(){
         val userID = auth.currentUser?.uid
         if (userID != null) {

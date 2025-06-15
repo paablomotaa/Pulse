@@ -100,6 +100,7 @@ class EditProfileViewModel @Inject constructor(
             errorBioText = ""
         )
     }
+
     fun onEditClick(goBack: () -> Boolean){
         if(hasEmptyFields()){
             state = state.copy(toastMessage = "Hay campos vacíos❌")

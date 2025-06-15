@@ -6,7 +6,9 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.pmgdev.pulse.repository.model.Comment
+import com.pmgdev.pulse.repository.model.Fine
 import com.pmgdev.pulse.repository.model.Post
+import com.pmgdev.pulse.repository.model.TypeFine
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import javax.inject.Inject
@@ -23,6 +25,18 @@ class PostRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firestorage: FirebaseStorage
 ) {
+    /**
+     *
+     * addPost
+     *
+     * Añade un post a la base de datos. Sube la información a Firestore y la foto a Storage
+     *
+     * @param uri
+     * @param uiduser
+     * @param username
+     * @param description
+     *
+     */
     suspend fun addPost(uri: Uri, uiduser: String, username: String, description: String) {
         val uid = UUID.randomUUID()
         val filename = "post/${uid}.jpg"
@@ -43,6 +57,15 @@ class PostRepository @Inject constructor(
         refpost.update("uid", refpost.id)
     }
 
+    /**
+     *
+     * getPost
+     *
+     * Recoge un post de la base de datos.
+     *
+     * @param uid
+     *
+     */
     suspend fun getPost(uid: String): Post? {
         val snapshot = firestore.collection("posts").document(uid).get().await()
 
@@ -59,6 +82,14 @@ class PostRepository @Inject constructor(
         return null
     }
 
+    /**
+     *
+     * getPosts
+     *
+     * Recoge todos los posts de la base de datos.
+     *
+     *
+     */
     suspend fun getPosts(): List<Post> {
         return try {
             val snapshot = firestore.collection("posts")
@@ -74,6 +105,14 @@ class PostRepository @Inject constructor(
             emptyList()
         }
     }
+
+    /**
+     *
+     * getPostsFromUser
+     *
+     * Recoge todos los posts de un usuario de la base de datos.
+     *
+     */
     suspend fun getPostsFromUser(userId:String):List<Post>{
         return try {
             val snapshot = firestore.collection("posts")
@@ -87,6 +126,16 @@ class PostRepository @Inject constructor(
         }
     }
 
+    /**
+     *
+     * observePosts
+     *
+     * Observa los cambios en los posts de la base de datos. Los pasa por un callback.
+     *
+     * @param onPostsChanged
+     *
+     */
+
     fun observePosts(onPostsChanged: (List<Post>) -> Unit) {
         firestore.collection("posts")
             .orderBy("date", com.google.firebase.firestore.Query.Direction.DESCENDING)
@@ -99,7 +148,17 @@ class PostRepository @Inject constructor(
             }
     }
 
-    //Escuchable para actualizar la lista de comentarios
+    /**
+     *
+     * observeComments
+     *
+     * Observa los cambios en los comentarios de un post. Los pasa por un callback.
+     *
+     * @param postId
+     * @param onCommentsChanged
+     *
+     *
+     */
     fun observeComments(postId: String, onCommentsChanged: (List<Comment>) -> Unit) {
         firestore
             .collection("posts")
@@ -116,6 +175,15 @@ class PostRepository @Inject constructor(
 
     }
 
+    /**
+     *
+     * getComments
+     *
+     * Recoge los comentarios de un post.
+     *
+     * @param postId
+     *
+     */
     suspend fun getComments(postId: String): List<Comment> {
         val snapshot = firestore
             .collection("posts")
@@ -127,6 +195,18 @@ class PostRepository @Inject constructor(
         return snapshot.documents.mapNotNull { it.toObject(Comment::class.java) }
     }
 
+    /**
+     *
+     * addComments
+     *
+     * Añade un comentario a un post.
+     *
+     * @param postId
+     * @param uidUser
+     * @param username
+     * @param content
+     *
+     */
     suspend fun addComments(postId: String, uidUser: String, username: String, content: String) {
         val comment = Comment(
             uidUser = uidUser,
@@ -145,6 +225,16 @@ class PostRepository @Inject constructor(
                     ) //Para incrementar los comentarios que tiene el post
             }
     }
+
+    /**
+     *
+     * deletePost
+     *
+     * Borra un post de la base de datos.
+     *
+     * @param postId
+     *
+     */
     suspend fun deletePost(postId:String){
         firestore.collection("posts").document(postId).delete()
     }
@@ -160,6 +250,16 @@ class PostRepository @Inject constructor(
         likeRef.set(emptyMap<String, Any>()) //Para que no añada ningun campo ya que el userUID lo estamos guardando en el nombre.
     }
 
+    /**
+     *
+     * unlikePost
+     *
+     * Borra un like de un post.
+     *
+     * @param postId
+     * @param userId
+     *
+     */
     suspend fun unlikePost(postId: String, userId: String) {
         val likeRef = firestore.collection("posts")
             .document(postId)
@@ -171,6 +271,17 @@ class PostRepository @Inject constructor(
         likeRef.delete().await()
     }
 
+    /**
+     *
+     * isPostLikedByUser
+     *
+     * Comprueba si un usuario ha dado like a un post.
+     *
+     * @param postId
+     * @param userId
+     *
+     */
+
     suspend fun isPostLikedByUser(postId: String, userId: String) : Boolean {
         val snapshot = firestore.collection("posts")
             .document(postId)
@@ -180,5 +291,24 @@ class PostRepository @Inject constructor(
             .await()
 
         return snapshot.exists()
+    }
+
+    /**
+     *
+     * createFine
+     *
+     * Crea una denuncia de un post.
+     *
+     * @param fine
+     */
+    suspend fun createFine(fine: Fine) : Result<Unit> {
+
+        try{
+            firestore.collection("fines").add(fine).await()
+            return Result.success(Unit)
+        }
+        catch (e:Exception){
+            return Result.failure(e)
+        }
     }
 }

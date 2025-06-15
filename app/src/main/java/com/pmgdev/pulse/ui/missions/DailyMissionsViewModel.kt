@@ -67,15 +67,13 @@ class DailyMissionsViewModel @Inject constructor(
         if (lastDateString != null) {
             val lastCompletionDate = LocalDate.parse(lastDateString, dateFormatter)
             isMissionClaimedToday = lastCompletionDate == today
-            Log.d("DailyMissionsViewModel", "Fecha última reclamación: $lastCompletionDate, Hoy: $today, Reclamado hoy: $isMissionClaimedToday")
+
         } else {
             isMissionClaimedToday = false
-            Log.d("DailyMissionsViewModel", "No hay fecha de reclamación guardada, Reclamado hoy: false")
         }
 
         userCurrentTitle = prefs.getString(KEY_CURRENT_ASSIGNED_TITLE, PROGRESSIVE_TITLES.first())
             ?: PROGRESSIVE_TITLES.first()
-        Log.d("DailyMissionsViewModel", "Título actual del usuario: $userCurrentTitle")
     }
 
 
@@ -83,6 +81,8 @@ class DailyMissionsViewModel @Inject constructor(
      * loadMissions
      * Carga el estado de la misión diaria basándose solo en los pasos actuales.
      * La propiedad 'isCompleted' de DailyMission ahora indica si la misión ya fue reclamada hoy.
+     *
+     * @param currentSteps
      */
     fun loadMissions(currentSteps: Int) {
         val currentMissionProgress = currentSteps
@@ -98,7 +98,7 @@ class DailyMissionsViewModel @Inject constructor(
                 isCompleted = isMissionClaimedToday
             )
         )
-        Log.d("DailyMissionsViewModel", "Misión cargada: Progreso=$currentMissionProgress, Objetivo=$DAILY_STEP_MISSION_GOAL, ¿En objetivo?=$isCurrentlyAtGoal, ¿Reclamado hoy (VM)?=$isMissionClaimedToday, ¿Misión.isCompleted?=${missions.first().isCompleted}")
+
     }
 
     /**
@@ -108,22 +108,19 @@ class DailyMissionsViewModel @Inject constructor(
      */
     fun claimMissionReward() {
         if (isMissionClaimedToday) {
-            Log.d("DailyMissionsViewModel", "Intento de reclamar misión pero ya fue reclamada hoy.")
 
             return
         }
 
         val currentMission = missions.firstOrNull()
         if (currentMission == null || currentMission.progress < currentMission.goal) {
-            Log.d("DailyMissionsViewModel", "Intento de reclamar misión pero objetivo no alcanzado o misión nula.")
             return
         }
 
         var missionsCompletedCount = prefs.getInt(KEY_MISSIONS_COMPLETED_COUNT, 0)
         missionsCompletedCount++
 
-        val titleIndex = (missionsCompletedCount - 1).coerceIn(0, PROGRESSIVE_TITLES.size - 1)
-        Log.d("index",titleIndex.toString())
+        val titleIndex = missionsCompletedCount.coerceIn(0, PROGRESSIVE_TITLES.size - 1)
         val newTitle = PROGRESSIVE_TITLES[titleIndex]
 
         val today = LocalDate.now()
@@ -164,7 +161,6 @@ class DailyMissionsViewModel @Inject constructor(
         }
 
         missions = missions.map { it.copy(isCompleted = true) }
-        Log.d("DailyMissionsViewModel", "Misión reclamada con éxito. Nuevo título: $newTitle")
 
     }
 }

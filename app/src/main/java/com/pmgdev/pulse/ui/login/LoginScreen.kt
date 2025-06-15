@@ -54,7 +54,9 @@ fun LoginScreen(goToRegister: () -> Unit, viewModel: LoginViewModel, goToHome: (
             },
             onDismiss = {
                 viewModel.hideEmailDialog()
-            }
+            },
+            title = "Contraseña olvidada",
+            text = "Tu correo electrónico"
         )
     }
     Column(

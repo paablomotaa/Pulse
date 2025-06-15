@@ -4,6 +4,7 @@ import com.pmgdev.pulse.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +35,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.pmgdev.pulse.repository.model.ChatPreview
 import com.pmgdev.pulse.ui.base.baseicons.arrowBack
+import com.pmgdev.pulse.ui.base.components.LoadingScreen
+import com.pmgdev.pulse.ui.base.components.NoDataScreen
 import com.pmgdev.pulse.ui.base.composables.BaseScaffold
 import com.pmgdev.pulse.ui.theme.clairgreen
 import com.pmgdev.pulse.ui.theme.dark
@@ -59,15 +62,30 @@ fun ChatListScreen(
         navIcon = arrowBack(),
         navIconAction = {goToFeed()},
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues).background(Brush.verticalGradient(listOf(clairgreen,dark)))
-        ) {
-            items(chats) { chat ->
-                ChatPreviewItem(chat = chat, onClick = { chatId ->  goToChat(chatId) })
-                Divider()
+
+        when(viewModel.state.value){
+            ChatListState.NoData -> {
+                NoDataScreen(paddingValues)
             }
+            ChatListState.isLoading -> {
+                LoadingScreen(paddingValues)
+            }
+            ChatListState.Success -> {
+                ChatScreenContent(paddingValues, chats, goToChat)
+            }
+        }
+    }
+}
+@Composable
+fun ChatScreenContent(paddingValues: PaddingValues,chats: List<ChatPreview>,goToChat: (String) -> Unit){
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues).background(Brush.verticalGradient(listOf(clairgreen,dark)))
+    ) {
+        items(chats) { chat ->
+            ChatPreviewItem(chat = chat, onClick = { chatId ->  goToChat(chatId) })
+            Divider()
         }
     }
 }
@@ -116,12 +134,6 @@ fun ChatPreviewItem(chat: ChatPreview, onClick: (String) -> Unit) {
                     text = chat.otherUserName,
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White
-                )
-                Text(
-                    text = chat.lastMessage,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White,
-                    maxLines = 1
                 )
             }
 

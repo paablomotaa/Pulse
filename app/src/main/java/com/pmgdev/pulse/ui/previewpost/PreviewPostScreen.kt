@@ -1,6 +1,7 @@
 package com.pmgdev.pulse.ui.previewpost
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -38,6 +39,7 @@ import com.pmgdev.pulse.ui.base.composables.BaseScaffold
 import com.pmgdev.pulse.ui.base.components.LoadingScreen
 import com.pmgdev.pulse.ui.base.baseicons.arrowBack
 import com.pmgdev.pulse.ui.base.components.NoDataScreen
+import com.pmgdev.pulse.ui.base.composables.BaseDialog
 import com.pmgdev.pulse.ui.base.composables.BaseTextField
 import com.pmgdev.pulse.ui.theme.clairgreen
 import com.pmgdev.pulse.ui.theme.dark
@@ -64,6 +66,16 @@ fun PostDetailScreen(
         viewModel.uploadImage(uid = post)
         viewModel.observeComments(post)
     }
+
+    if(viewModel.showDialogFine){
+        BaseDialog(
+            title = "¿Seguro que deseas reportar a este usuario?",
+            text = "Crearemos un registro y nos pondremos a revisar esta publicación",
+            onConfirm = {viewModel.createFine(post)},
+            onDismiss = {viewModel.hideDialogFine()}
+        )
+    }
+
     BaseScaffold(
         title = "Detalles de la publicación",
         navController = navController,
@@ -79,7 +91,7 @@ fun PostDetailScreen(
             Action(
                 icon = Icons.Default.Warning,
                 contentDescription = "",
-                onClick = {}
+                onClick = {viewModel.showDialogFine()}
             ),
         )
     ) { paddingValues ->
@@ -114,6 +126,17 @@ fun PostDetailContent(
     viewModel: PreviewPostViewModel,
     goToProfile: (String) -> Unit
 ) {
+
+        if(viewModel.showDialogDelete){
+            BaseDialog(
+                title = "¿Seguro que deseas borrar la publicación?",
+                text = "El cambio sera irreversible y no podrás recuperar los datos.",
+                onConfirm = {viewModel.deletePost(post.uid)},
+                onDismiss = {viewModel.hideDialogDelete()}
+            )
+        }
+
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -179,7 +202,10 @@ fun PostDetailContent(
                                     .fillMaxWidth()
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            Row {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
 
                                     BaseButton(
                                         onClick = {viewModel.postComment(post.uid)},
@@ -196,7 +222,7 @@ fun PostDetailContent(
                         else{
                             BaseButton(
                                 //Funcion para eliminar
-                                onClick = {viewModel.deletePost(post.uid)},
+                                onClick = {viewModel.showDialogDelete()},
                                 label = "Eliminar"
                             )
                         }

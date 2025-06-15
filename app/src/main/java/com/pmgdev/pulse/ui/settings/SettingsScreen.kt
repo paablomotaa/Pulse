@@ -55,7 +55,9 @@ fun SettingsScreen(
         if(viewModel.state.showDeleteDialog){
             BaseDialog(
                 onConfirm = { viewModel.deleteAccount(goToLogin) },
-                onDismiss = { viewModel.hideDeleteDialog() }
+                onDismiss = { viewModel.hideDeleteDialog() },
+                title = "¿Seguro que deseas borra tu cuenta?",
+                text = "Se borrarán todos los registros de tu cuenta y no se podrá recuperar"
             )
         }
         if(viewModel.state.showEmailDialog){
@@ -64,7 +66,9 @@ fun SettingsScreen(
                     viewModel.changeEmail(newEmail)
                     viewModel.hideEmailDialog()
                 },
-                onDismiss = { viewModel.hideEmailDialog() }
+                onDismiss = { viewModel.hideEmailDialog() },
+                title = "Cambiar correo",
+                text = "Nuevo correo"
             )
         }
 

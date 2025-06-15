@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.pmgdev.pulse.ui.base.composables.BaseButton
 import com.pmgdev.pulse.ui.base.composables.BaseScaffold
 import com.pmgdev.pulse.ui.base.composables.BaseTextField
 import com.pmgdev.pulse.ui.theme.clairgreen
@@ -71,24 +72,11 @@ fun UtilitiesScreen(
                 label = "¿Que quieres mejorar?"
             )
 
-            //Botón personalizado para mejorar la experiencia del usuario
-            Button(
-                onClick = { viewModel.getPersonalizedDietAdvice() },
-                enabled = !state.isLoading,
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonColors(containerColor = mediumgreen, contentColor = Color.White, disabledContentColor = Color.Red, disabledContainerColor = Color.Red)
-            ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Text("Obtener Consejo")
-                }
-            }
-            //Forma más interactiva de controlar los errores de campo vacío u otros errores.
-            //CAMBIAR A ESTADOS NORMALES PARA MEJOR FUNCIONALIDAD.
+            BaseButton(
+                onClick = {viewModel.getPersonalizedDietAdvice()},
+                label = "Obtener consejo"
+            )
+
             state.errorMessage?.let { error ->
                 Text(
                     text = error,
@@ -107,7 +95,7 @@ fun UtilitiesScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            "Tu consejo personalizado:",
+                            "Dieta: ",
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )

@@ -1,6 +1,8 @@
 package com.pmgdev.pulse.repository.firebaserepository
 
+import android.content.Context
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
@@ -10,6 +12,7 @@ import com.pmgdev.pulse.repository.model.Fine
 import com.pmgdev.pulse.repository.model.Message
 import com.pmgdev.pulse.repository.model.User
 import com.pmgdev.pulse.utils.CryptoUtils
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -21,13 +24,24 @@ import javax.inject.Inject
  *
  */
 class ChatRepository @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val auth: FirebaseAuth,
+    @ApplicationContext private val context: Context
 ) {
-
+    /**
+     *
+     * createChatIfNotExists
+     *
+     * Crea un chat si no existe. Registra a los participantes y pasa el uid mediante un callback
+     *
+     * @param userId1
+     * @param userId2
+     * @param onComplete
+     *
+     */
     fun createChatIfNotExists(
         userId1: String,
         userId2: String,
-        firstMessage: Message,
         onComplete: (String) -> Unit, //Para pasar mejor el resultado una vez se complete.
     ) {
         val db = FirebaseFirestore.getInstance()
@@ -47,14 +61,9 @@ class ChatRepository @Inject constructor(
                     val chat = Chat(
                         id = newChatRef.id,
                         participants = listOf(userId1, userId2),
-                        lastMessage = "",
-                        lastMessageTimestamp = firstMessage.timestamp
                     )
-                    val newMessageRef = newChatRef.collection("messages").document()
-
                     db.runBatch { batch ->
                         batch.set(newChatRef, chat)
-                        batch.set(newMessageRef, firstMessage)
                     }.addOnSuccessListener {
                         onComplete(newChatRef.id)
                     }.addOnFailureListener{
@@ -67,7 +76,15 @@ class ChatRepository @Inject constructor(
             }
     }
 
-
+    /**
+     *
+     * getChatFromUser
+     *
+     * Recoge los chats de un usuario.
+     *
+     * @param userUID
+     *
+     */
     suspend fun getChatFromUser(userUID: String): List<ChatPreview> {
         val previews = mutableListOf<ChatPreview>()
 
@@ -87,13 +104,12 @@ class ChatRepository @Inject constructor(
                 val user = userDoc.toObject(User::class.java)
 
                 if (user != null) {
-                    Log.d("SUCCESS","SUCCESS")
+                    val privatekey = CryptoUtils.getKEYRSA(context, auth.currentUser?.uid ?: "")
                     previews.add(
                         ChatPreview(
                             chatId = chat.id,
                             otherUserName = user.fullname,
                             otherUserImageUrl = user.profileImage,
-                            lastMessage = CryptoUtils.decrypt(chat.lastMessage),
                             timestamp = chat.lastMessageTimestamp
                         )
                     )
@@ -105,6 +121,19 @@ class ChatRepository @Inject constructor(
 
         return previews
     }
+
+
+    /**
+     *
+     * getMessages
+     *
+     * Recoge los mensajes de un chat. Los pasa por un callback.
+     *
+     * @param chatId
+     * @param onSuccess
+     * @param onFailure
+     *
+     */
     suspend fun getMessages(
         chatId: String,
         onSuccess:(List<Message>) -> Unit,
@@ -123,6 +152,17 @@ class ChatRepository @Inject constructor(
                 onFailure(e)
             }
     }
+
+    /**
+     *
+     * sendMessage
+     *
+     * Envia un mensaje a un chat mediante una transacción
+     *
+     * @param chatId
+     * @param message
+     *
+     */
     fun sendMessage(
         chatId: String,
         message: Message,
@@ -134,7 +174,8 @@ class ChatRepository @Inject constructor(
             batch.set(newMessageRef, message)
             batch.update(chatRef, mapOf(
                 "lastMessage" to message.text,
-                "lastMessageTimestamp" to message.timestamp
+                "lastMessageTimestamp" to message.timestamp,
+                "lastMessageSender" to message.senderId
             ))
         }.addOnSuccessListener {
             Log.d("GOD","SUCCESS")
@@ -143,6 +184,18 @@ class ChatRepository @Inject constructor(
                 Log.d("ERROR","ERROR")
             }
     }
+
+    /**
+     *
+     * observeMessages
+     *
+     * Observa los cambios en los mensajes de un chat. Los pasa por un callback.
+     *
+     * @param chatId
+     * @param onChange
+     * @param onError
+     *
+     */
     fun observeMessages(
         chatId: String,
         onChange: (List<Message>) -> Unit,
@@ -162,6 +215,16 @@ class ChatRepository @Inject constructor(
                 onChange(messages)
             }
     }
+
+    /**
+     *
+     * createFine
+     *
+     * Crea una denuncia del chat.
+     *
+     * @param fine
+     *
+     */
     fun createFine(fine: Fine): Result<Unit>{
         return try {
             val fineRef = firestore.collection("fines").add(fine)
@@ -169,5 +232,26 @@ class ChatRepository @Inject constructor(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    /**
+     *
+     * getUidOtherParticipant
+     *
+     * Recoge el uid del otro participante de un chat.
+     *
+     * @param chatId
+     *
+     */
+
+    suspend fun getUidOtherParticipant(chatId:String): String?{
+        val chatRef = firestore.collection("chats").document(chatId).get().await()
+        val chat = chatRef.toObject(Chat::class.java)
+        for(id in chat?.participants!!){
+            if(id != auth.currentUser?.uid){
+                return id
+            }
+        }
+        return null
     }
 }

@@ -12,18 +12,20 @@ import androidx.compose.runtime.setValue
 
 @Composable
 fun ChangeEmailDialog(
+    title:String,
+    text:String,
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit
 ){
     var email by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Cambiar correo") },
+        title = { Text(title) },
         text = {
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Nuevo correo") }
+                label = { Text(text) }
             )
         },
         confirmButton = {
@@ -42,13 +44,15 @@ fun ChangeEmailDialog(
 }
 @Composable
 fun BaseDialog(
+    title:String,
+    text:String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ){
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Eliminación de cuenta") },
-        text = {Text("¿Seguro que deseas borrar tu cuenta? Se perderán todos tus datos y estos no podrán ser recuperados.")},
+        title = { Text(title) },
+        text = {Text(text)},
         confirmButton = {
             BaseButton(
                 onClick = { onConfirm() },

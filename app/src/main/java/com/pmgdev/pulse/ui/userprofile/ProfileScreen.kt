@@ -186,6 +186,14 @@ fun ProfileScreenContent(
                                 modifier = Modifier.padding(horizontal = 32.dp)
                             )
                             Spacer(modifier = Modifier.height(16.dp))
+                            if(user?.title != ""){
+                                Text("Titulo: ${user?.title}",color = Color.White)
+                            }
+                            else{
+                                Text("Aun no obtenido",color = Color.White)
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(22.dp),
                                 verticalAlignment = Alignment.CenterVertically  
@@ -242,7 +250,7 @@ fun ProfileScreenContent(
                                         horizontalArrangement = Arrangement.spacedBy(32.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Text("Send message")
+                                        Text("Iniciar chat")
                                         Icon(imageVector = Icons.Default.MailOutline, contentDescription = "")
                                     }
                                 }

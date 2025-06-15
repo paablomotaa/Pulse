@@ -56,11 +56,12 @@ fun ChatScreen(
     LaunchedEffect(Unit) {
         viewModel.loadMessages(chatId)
         viewModel.observeMessages(chatId)
+        viewModel.getUsernameFromOtherParticipant(chatId)
     }
     val messages by viewModel.messages
 
     BaseScaffold(
-        title = "",
+        title = viewModel.username,
         navController = navController,
         showBottomBar = false,
         actions = listOf(

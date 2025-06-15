@@ -96,7 +96,7 @@ class UtilitiesViewModel @Inject constructor() : ViewModel() {
                 uiState = uiState.copy(dietAdvice = response.text)
             } catch (e: Exception) {
                 uiState = uiState.copy(
-                    errorMessage = "Error al generar el consejo: ${e.localizedMessage}"
+                    errorMessage = "Error al obtener el consejo de dieta."
                 )
                 e.printStackTrace()
             } finally {

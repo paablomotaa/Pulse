@@ -5,10 +5,17 @@ import androidx.datastore.preferences.core.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
+/**
+ *
+ * Clase Session
+ *
+ * Para gestionar la sesión del usuario y las preferencias.
+ *
+ */
 @Singleton
 class Session @Inject constructor(private val dataStore: DataStore<Preferences>) {
     companion object {
@@ -28,6 +35,16 @@ class Session @Inject constructor(private val dataStore: DataStore<Preferences>)
         val lastStepDateKey = longPreferencesKey(LAST_STEP_DATE)
     }
 
+    /**
+     *
+     * isUserLoggedIn
+     *
+     * Devuelve un Flow<Boolean> que indica si el usuario ha iniciado sesión o no.
+     *
+     *
+     *
+     */
+
     fun isUserLoggedIn(): Flow<Boolean> {
         return dataStore.data.catch {
             emit(emptyPreferences())
@@ -35,6 +52,18 @@ class Session @Inject constructor(private val dataStore: DataStore<Preferences>)
             preference[isLogin] ?: false
         }
     }
+
+    /**
+     *
+     * saveUserSession
+     *
+     * Guarda la sesión del usuario en las preferencias.
+     *
+     * @param userEmail
+     * @param userPassword
+     * @param isUserLoggedIn
+     *
+     */
 
     suspend fun saveUserSession(userEmail: String, userPassword: String, isUserLoggedIn: Boolean) {
         dataStore.edit { preference ->
@@ -44,86 +73,17 @@ class Session @Inject constructor(private val dataStore: DataStore<Preferences>)
         }
     }
 
-    suspend fun setUserLoggedIn(isUserLoggedIn: Boolean) {
-        dataStore.edit { preference ->
-            preference[isLogin] = isUserLoggedIn
-        }
-    }
-
-    fun getEmail(): Flow<String> {
-        return dataStore.data.catch {
-            emit(emptyPreferences())
-        }.map { preferences ->
-            preferences[email] ?: ""
-        }
-    }
-
-    suspend fun setEmail(userEmail: String) {
-        dataStore.edit { preference ->
-            preference[email] = userEmail
-        }
-    }
-
-    fun getPassword(): Flow<String> {
-        return dataStore.data.catch {
-            emit(emptyPreferences())
-        }.map { value: Preferences ->
-            value[password] ?: ""
-        }
-    }
-
-    suspend fun setPassword(userPassWord: String) {
-        dataStore.edit { preference ->
-            preference[password] = userPassWord
-        }
-    }
-
-
-    fun getUser(): Flow<String> {
-        return dataStore.data.catch {
-            emit(emptyPreferences())
-        }.map { value: Preferences ->
-            value[userName] ?: ""
-        }
-    }
-
-    suspend fun setUser(user: String) {
-        dataStore.edit { preference ->
-            preference[userName] = USERNAME
-        }
-    }
+    /**
+     *
+     * clearSession
+     *
+     * Borra la sesión del usuario.
+     *
+     */
     suspend fun clearSession() {
         dataStore.edit { preferences ->
             preferences.clear()
         }
     }
-    suspend fun saveRealtimeStepsToday(steps: Int) {
-        dataStore.edit { preference ->
-            preference[realtimeStepsTodayKey] = steps
-            preference[lastStepDateKey] = System.currentTimeMillis() // Guarda la hora actual
-        }
-    }
-    fun getRealtimeStepsToday(): Flow<Int> {
-        return dataStore.data.catch {
-            emit(emptyPreferences())
-        }.map { preferences ->
-            val lastSavedDate = preferences[lastStepDateKey] ?: 0L
-            val today = System.currentTimeMillis()
-
-
-            if (!isSameDay(lastSavedDate, today)) {
-                0
-            } else {
-                preferences[realtimeStepsTodayKey] ?: 0
-            }
-        }
-    }
-    private fun isSameDay(timestamp1: Long, timestamp2: Long): Boolean {
-        val cal1 = Calendar.getInstance().apply { timeInMillis = timestamp1 }
-        val cal2 = Calendar.getInstance().apply { timeInMillis = timestamp2 }
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
-    }
-
 
 }

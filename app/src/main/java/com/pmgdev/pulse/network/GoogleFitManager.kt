@@ -26,6 +26,20 @@ import java.util.concurrent.TimeUnit
 object GoogleFitManager {
     private var stepSensorListener: OnDataPointListener? = null
 
+    /**
+     *
+     * getStepsForDay
+     *
+     * Este método recoge los datos de pasos dependiendo del offset que se le pase.
+     * En este caso es -1 porque queremos recoger los pasos de ayer.
+     *
+     * @param context
+     * @param dayOffset
+     * @param onStepsRead
+     * @param onError
+     *
+     */
+
     fun getStepsForDay(context: Context, dayOffset: Long, onStepsRead: (Int) -> Unit, onError: (Exception) -> Unit) {
         val fitnessOptions = FitnessOptions.builder()
             .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
@@ -60,6 +74,18 @@ object GoogleFitManager {
                 onError(e)
             }
     }
+
+    /**
+     *
+     * getCaloriesToday
+     *
+     * Este método recoge los datos tipo calorías del dia.
+     *
+     * @param context
+     * @param onCaloriesRead
+     * @param onError
+     *
+     */
     fun getCaloriesToday(context: Context, onCaloriesRead: (Float) -> Unit, onError: (Exception) -> Unit) {
         val fitnessOptions = FitnessOptions.builder()
             .addDataType(DataType.TYPE_CALORIES_EXPENDED, FitnessOptions.ACCESS_READ)
@@ -96,6 +122,17 @@ object GoogleFitManager {
             }
     }
 
+    /**
+     *
+     * registerStepSensor
+     *
+     * Metodo para registrar el sensor para detectar los pasos a tiempo real
+     *
+     * @param context
+     * @param onStepUpdate
+     * @param onError
+     *
+     */
     fun registerStepSensor(context: Context, onStepUpdate: (Int) -> Unit, onError: (Exception) -> Unit) {
         val fitnessOptions = FitnessOptions.builder()
             .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
@@ -121,13 +158,23 @@ object GoogleFitManager {
                 stepSensorListener!!
             )
             .addOnSuccessListener {
-                Log.d("GoogleFit", "Sensor de pasos registrado con éxito!")
+                Log.d("OK", "OK")
             }
             .addOnFailureListener { e ->
-                Log.e("GoogleFit", "Fallo al registrar el sensor de pasos: ${e.message}")
                 onError(e)
             }
     }
+
+    /**
+     *
+     * unregisterStepSensor
+     *
+     * Este método hace lo contrario. Desregistra el sensor de pasos.
+     *
+     * @param context
+     *
+     */
+
     fun unregisterStepSensor(context: Context) {
         if (stepSensorListener == null) {
             return
@@ -141,11 +188,10 @@ object GoogleFitManager {
         Fitness.getSensorsClient(context, account)
             .remove(stepSensorListener!!)
             .addOnSuccessListener {
-                Log.d("GoogleFit", "Sensor de pasos desregistrado con éxito.")
                 stepSensorListener = null
             }
             .addOnFailureListener { e ->
-                Log.e("GoogleFit", "Fallo al desregistrar el sensor de pasos: ${e.message}")
+                Log.d("Error","Error")
             }
     }
 }

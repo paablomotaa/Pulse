@@ -54,16 +54,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == FitnessScreenViewModel.GOOGLE_FIT_PERMISSIONS_REQUEST_CODE) {
-            val context = this
-            val viewModel: FitnessScreenViewModel by viewModels()
-                if (viewModel.checkGoogleFitPermissions(context)) {
-                    viewModel.requestSteps(context)
-                    viewModel.requestCalories(context)
-                }
-        }
-    }*/
 }

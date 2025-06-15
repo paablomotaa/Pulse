@@ -32,6 +32,15 @@ class UserRepository @Inject constructor(
     private val auth: FirebaseAuth,
     private val firebaseStorage: FirebaseStorage
 ) {
+    /**
+     *
+     * addUser
+     *
+     * Añade un usuario a la base de datos.
+     *
+     * @param user
+     *
+     */
     suspend fun addUser(user: User): Result<Unit> {
         return try {
             val userRef = firestore.collection("users").document(user.uid)
@@ -41,6 +50,16 @@ class UserRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+    /**
+     *
+     * getUser
+     *
+     * Recoge la información de un usuario de la base de datos.
+     *
+     * @param uid
+     *
+     */
     suspend fun getUser(uid: String): User? {
         val snapshot = firestore.collection("users").document(uid).get().await()
 
@@ -58,6 +77,17 @@ class UserRepository @Inject constructor(
             return null
         }
     }
+
+    /**
+     *
+     * editUser
+     *
+     * Edita la información de un usuario de la base de datos.
+     *
+     * @param userId
+     * @param user
+     *
+     */
     fun editUser(userId: String, user: User) {
         if (user.profileImage.startsWith("content://") || user.profileImage.startsWith("file://")) {
             val imageUri = user.profileImage.toUri()
@@ -77,7 +107,15 @@ class UserRepository @Inject constructor(
         }
     }
 
-
+    /**
+     *
+     * checkemailexists
+     *
+     * Comprueba si un email ya está registrado en la base de datos.
+     *
+     * @param email
+     *
+     */
     suspend fun checkemailexists(email:String): Boolean{
         val email = firestore.collection("users").whereEqualTo("email",email).get().await()
 
@@ -88,6 +126,16 @@ class UserRepository @Inject constructor(
             return true
         }
     }
+
+    /**
+     *
+     * checkusernameexists
+     *
+     * Comprueba si un username ya está registrado en la base de datos.
+     *
+     * @param username
+     *
+     */
     suspend fun checkusernameexists(username:String):Boolean{
         val username = firestore.collection("users").whereEqualTo("username",username).get().await()
 
@@ -100,7 +148,15 @@ class UserRepository @Inject constructor(
     }
 
 
-
+    /**
+     *
+     * followUser
+     *
+     * Crea un registro de seguimiento entre dos usuarios.
+     *
+     * @param currentUid
+     *
+     */
     suspend fun followUser(
         currentUid: String,
         targetUid: String,
@@ -123,6 +179,17 @@ class UserRepository @Inject constructor(
         followingRef.set(followData)
         followerRef.set(followerData)
     }
+
+    /**
+     *
+     * unfollowUser
+     *
+     * Borra un registro de seguimiento entre dos usuarios.
+     *
+     * @param currentUid
+     *
+     */
+
     suspend fun unfollowUser(currentUid: String, targetUid: String) {
         val followingRef = firestore.collection("users").document(currentUid)
             .collection("following").document(targetUid)
@@ -140,6 +207,15 @@ class UserRepository @Inject constructor(
         followerRef.delete().await()
     }
 
+    /**
+     *
+     * changeEmail
+     *
+     * Cambia el email de un usuario.
+     *
+     * @param newEmail
+     *
+     */
     suspend fun changeEmail(newEmail: String): Result<Boolean> {
         return try {
             val user = auth.currentUser ?: return Result.failure(Exception("Usuario no autenticado"))
@@ -156,6 +232,16 @@ class UserRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+    /**
+     *
+     * deleteAccount
+     *
+     * Borra la cuenta de un usuario y sus publicaciones.
+     *
+     * @param user
+     *
+     */
     suspend fun deleteAccount(): Result<Boolean>{
         return try{
             val user = auth.currentUser ?: return Result.failure(Exception("Usuario no autenticado"))
@@ -169,6 +255,15 @@ class UserRepository @Inject constructor(
             for (document in posts.documents) {
                 firestore.collection("posts").document(document.id).delete().await()
             }
+            // Borro chats donde el usuario participa
+            val chatSnapshots = firestore.collection("chats")
+                .whereArrayContains("participants", user.uid)
+                .get()
+                .await()
+
+            for (chatDoc in chatSnapshots.documents) {
+                chatDoc.reference.delete().await()
+            }
 
             //Borro al usuario de firestore
 
@@ -179,16 +274,39 @@ class UserRepository @Inject constructor(
 
             //Borro al usuario de auth
             user.delete()
+
+
+
             Result.success(true)
         } catch (e: Exception){
             Result.failure(e)
         }
     }
 
+    /**
+     *
+     * getNotificationsFromUser
+     *
+     * Recoge las notificaciones de un usuario.
+     *
+     * @param userId
+     *
+     */
     suspend fun getNotificationsFromUser(userId:String) : List<Notification>{
         val notificationsRef = firestore.collection("users").document(userId).collection("notifications").get().await()
         return notificationsRef.toObjects(Notification::class.java)
     }
+
+    /**
+     *
+     * pushNotificationFromUser
+     *
+     * Registra una notificación a un usuario en la base de datos.
+     *
+     * @param userId
+     * @param notification
+     *
+     */
     suspend fun pushNotificationFromUser(userId:String, notification: Notification):Result<Unit>{
 
         return try {
@@ -198,20 +316,6 @@ class UserRepository @Inject constructor(
             return Result.success(Unit)
         } catch (e: Exception){
             return Result.failure(e)
-        }
-    }
-    suspend fun saveFcmTokenForCurrentUser(userId: String) {
-        Firebase.messaging.token.addOnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w("FCM", "Fetching FCM registration token failed", task.exception)
-                return@addOnCompleteListener
-            }
-
-            val token = task.result
-            val userDocRef = firestore.collection("users").document(userId)
-            userDocRef.update("fcmToken", token)
-                .addOnSuccessListener {
-                }
         }
     }
 }

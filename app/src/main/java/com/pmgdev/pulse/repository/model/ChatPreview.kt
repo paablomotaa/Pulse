@@ -8,6 +8,5 @@ data class ChatPreview(
     val chatId: String,
     val otherUserName: String,
     val otherUserImageUrl: String,
-    val lastMessage: String,
     val timestamp: Timestamp
 )

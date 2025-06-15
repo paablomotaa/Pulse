@@ -23,7 +23,9 @@ data class User(
     val created_at: Date = Date(),
     val followers: Int = 0,
     val following: Int = 0,
-    val title:String = ""
+    val title:String = "",
+    val idOneSignal:String = "",
+    val publicKey:String = ""
 ) {
-    constructor() : this("","", "", "", "", "", Date(), 0, 0,"")
+    constructor() : this("","", "", "", "", "", Date(), 0, 0,"","")
 }

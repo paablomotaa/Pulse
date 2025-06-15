@@ -1,5 +1,7 @@
 package com.pmgdev.pulse.ui.signup
 
+import android.content.Context
+import android.util.Base64
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,12 +9,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.onesignal.OneSignal
 import com.pmgdev.pulse.repository.firebaserepository.UserRepository
 import com.pmgdev.pulse.repository.model.User
+import com.pmgdev.pulse.utils.CryptoUtils
 import com.pmgdev.pulse.utils.ValidatePassword
 import com.pmgdev.pulse.utils.isValidEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -32,10 +36,13 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val auth: FirebaseAuth,
-    val repository: UserRepository
+    val repository: UserRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
     var state by mutableStateOf(RegisterScreenState())
         private set
+
+
 
     private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
@@ -143,7 +150,18 @@ class RegisterViewModel @Inject constructor(
             )
         }
     }
+
+    /**
+     *
+     * onRegisterClick
+     *
+     * Verifica los campos y registra al usuario en auth, firestore y OneSignal.
+     *
+     */
     fun onRegisterClick(goToLogin: () -> Unit) {
+
+
+
         if (validateFields()){
             state = state.copy(toastMessage = "Hay campos incorrectos❌")
             return
@@ -153,6 +171,9 @@ class RegisterViewModel @Inject constructor(
             state = state.copy(toastMessage = "Hay campos vacíos❌")
             return
         }
+
+
+
         viewModelScope.launch {
             val usernameexists = repository.checkusernameexists(state.username)
             val emailexists = repository.checkemailexists(state.email)
@@ -174,7 +195,11 @@ class RegisterViewModel @Inject constructor(
                 auth.createUserWithEmailAndPassword(state.email,state.password).addOnCompleteListener{ test ->
                     if(test.isSuccessful){
 
+                        val claveRSA = CryptoUtils.genRSA()
+
                         val user = auth.currentUser
+                        OneSignal.login(user?.uid ?: "")
+                        val publicKeyEncode = Base64.encodeToString(claveRSA.public.encoded, Base64.NO_WRAP)
                         val newUser = User(
                             uid = user?.uid ?: "",
                             username = state.username,
@@ -184,8 +209,17 @@ class RegisterViewModel @Inject constructor(
                             created_at = Date(),
                             followers = 0,
                             following = 0,
-                            title = ""
+                            title = "",
+                            idOneSignal = OneSignal.User.pushSubscription.id,
+                            publicKey = publicKeyEncode,
                         )
+
+                        CryptoUtils.saveKeyRSA(
+                            context = context,
+                            privateKey = claveRSA.private,
+                            uid = user?.uid ?: ""
+                        )
+
                         viewModelScope.launch {
                             repository.addUser(newUser)
                         }
@@ -198,7 +232,6 @@ class RegisterViewModel @Inject constructor(
                 }
             }
         }
-
     }
 
     private fun hasEmptyFields():Boolean{
