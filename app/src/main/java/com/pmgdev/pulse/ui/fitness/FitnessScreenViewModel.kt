@@ -74,6 +74,7 @@ class FitnessScreenViewModel @Inject constructor(
                     isNotRegister = false,
                 )
                 startRealtimeSteps(context)
+                Log.d("GoogleFit", "Pasos de hoy: $historicalStepsToday")
             },
             onError = {
                 uiState = uiState.copy(
@@ -81,6 +82,7 @@ class FitnessScreenViewModel @Inject constructor(
                     isError = true
                 )
                 startRealtimeSteps(context)
+                Log.d("ERORR","ERROR")
             }
         )
 
@@ -97,17 +99,21 @@ class FitnessScreenViewModel @Inject constructor(
      *
      */
     private fun startRealtimeSteps(context: Context) {
+        Log.d("Realtime","Entering")
         GoogleFitManager.registerStepSensor(
             context = context,
             onStepUpdate = { newStepsDelta ->
                 currentRealtimeStepsToday += newStepsDelta
                 uiState = uiState.copy(steps = currentRealtimeStepsToday)
+                Log.d("Realtime","OK")
             },
             onError = {
                 uiState = uiState.copy(
                     error = it.message,
-                    isError = true
+                    isError = true,
+
                 )
+                Log.d("Realtime","Error")
             }
         )
     }

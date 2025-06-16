@@ -1,9 +1,11 @@
 package com.pmgdev.pulse
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -33,6 +35,7 @@ import com.google.firebase.appcheck.appCheck
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
 import com.google.firebase.initialize
 import com.google.firebase.storage.FirebaseStorage
+import com.pmgdev.pulse.network.GoogleFitManager
 import com.pmgdev.pulse.ui.fitness.FitnessScreenViewModel
 import com.pmgdev.pulse.ui.home.HomeScreen
 import com.pmgdev.pulse.ui.settings.SettingsViewModel
@@ -50,7 +53,27 @@ class MainActivity : ComponentActivity() {
         )
         setContent {
             PulseTheme {
+                Surface(
+                    modifier = Modifier.systemBarsPadding()
+                ) {
                     HomeScreen()
+                }
+
+            }
+        }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1001) {
+            if (resultCode == Activity.RESULT_OK) {
+                Log.d("GoogleFit", "Permisos concedidos")
+                GoogleFitManager.registerStepSensor(this, { steps ->
+                    Log.d("Steps", "Pasos: $steps")
+                }, { e ->
+                    Log.e("Error", "Fallo al registrar sensor", e)
+                })
+            } else {
+                Log.e("GoogleFit", "Permisos denegados")
             }
         }
     }

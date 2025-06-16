@@ -40,8 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.pmgdev.pulse.ui.base.baseicons.Barefoot
 import com.pmgdev.pulse.ui.base.baseicons.FireIcon
-import com.pmgdev.pulse.ui.base.baseicons.directionIcon
 import com.pmgdev.pulse.ui.base.composables.BaseButton
 import com.pmgdev.pulse.ui.base.composables.BaseScaffold
 import com.pmgdev.pulse.ui.base.components.LoadingScreen
@@ -156,7 +156,7 @@ fun FitnessScreenUserLogged(
             Spacer(modifier = Modifier.height(16.dp))
 
             FitnessInfoCard(
-                icon = directionIcon(),
+                icon = Barefoot(),
                 title = "Pasos de ayer",
                 value = "${viewModel.uiState.stepsYesterday} pasos"
             )
@@ -164,7 +164,7 @@ fun FitnessScreenUserLogged(
             Spacer(modifier = Modifier.height(12.dp))
 
             FitnessInfoCard(
-                icon = directionIcon(),
+                icon = Barefoot(),
                 title = "Pasos de hoy",
                 value = "${viewModel.uiState.steps} pasos"
             )

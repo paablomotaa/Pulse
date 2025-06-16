@@ -139,11 +139,13 @@ object GoogleFitManager {
             .build()
 
         val account = GoogleSignIn.getAccountForExtension(context, fitnessOptions)
-
+        Log.d("Entro aqui","Entro aqui")
         stepSensorListener = OnDataPointListener { dataPoint: DataPoint ->
+            Log.d("Llego","Llego correctamente a onDataPoint")
             for (field in dataPoint.dataType.fields) {
                 if (field.name == Field.FIELD_STEPS.name) {
                     val steps = dataPoint.getValue(field).asInt()
+                    Log.d("Llego","Llego correctamente a onStepUpdate")
                     onStepUpdate(steps)
                 }
             }
@@ -158,7 +160,7 @@ object GoogleFitManager {
                 stepSensorListener!!
             )
             .addOnSuccessListener {
-                Log.d("OK", "OK")
+                Log.d("RegisterSensor", "OK")
             }
             .addOnFailureListener { e ->
                 onError(e)
