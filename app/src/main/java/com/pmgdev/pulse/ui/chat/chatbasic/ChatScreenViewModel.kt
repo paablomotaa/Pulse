@@ -165,13 +165,13 @@ class ChatScreenViewModel @Inject constructor(
             val messageEncrypted = CryptoUtils.encryptMessage(text, claveAES)
 
 
-            //Encriptar la clave AES con la clave RSA de la otra persona
+            //Encriptar la clave AES con la clave RSA de mi usuario.
             val publicKeyByte = Base64.decode(currentUser?.publicKey, Base64.NO_WRAP)
             val keySpec = X509EncodedKeySpec(publicKeyByte)
             val publicKey = KeyFactory.getInstance("RSA").generatePublic(keySpec)
             val keyAesSender = CryptoUtils.encryptAES(claveAES, publicKey)
 
-            //Encriptar la clave AES con la clave RSA del usuario.
+            //Encriptar la clave AES con la clave RSA del otro usuario.
             val publicKeyByte2 = Base64.decode(user?.publicKey, Base64.NO_WRAP)
             val keySpec2 = X509EncodedKeySpec(publicKeyByte2)
             val publicKey2 = KeyFactory.getInstance("RSA").generatePublic(keySpec2)
